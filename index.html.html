@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPTV by BK-16</title>
+<style>
+  :root{
+    --bg1:#0b1220; --bg2:#08101d;
+    --panel:#0f172a; --border:#334155; --muted:#9fb2c7;
+    --brand1:#17c1d6; --brand2:#31d17b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#fff}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:10;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.06)}
+  .bar{max-width:1200px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:center;gap:16px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand img{width:64px;height:64px;object-fit:contain;border-radius:10px;display:block}
+  .title{font-weight:900;letter-spacing:.3px;font-size:clamp(22px,4vw,34px);background:linear-gradient(90deg,var(--brand1),var(--brand2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  main{max-width:1200px;margin:16px auto;padding:0 12px}
+
+  /* Player */
+  .player{width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+  video{width:100%;height:100%;background:#000;outline:none}
+
+  /* Grid ช่องกีฬา */
+  .section-title{
+    text-align:center;margin:20px 0 10px;font-weight:900;
+    font-size:clamp(18px,2.4vw,22px);letter-spacing:.3px;
+  }
+  .section-title .accent{
+    background:linear-gradient(90deg,var(--brand1),var(--brand2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;justify-content:center}
+  .ch{width:150px;background:var(--panel);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;padding:8px;transition:transform .15s ease, background .15s ease}
+  .ch:hover{transform:translateY(-1px);background:#0b1220}
+  .ch.active{outline:2px solid var(--brand1);box-shadow:0 0 0 3px rgba(23,193,214,.25) inset}
+  .ch img{width:100%;height:84px;object-fit:contain;display:block;margin:0 auto 6px}
+  .name{font-size:13px;color:#dbeafe}
+  .hint{margin:10px 0 0;text-align:center;font-size:13px;color:var(--muted)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand">
+      <img alt="BK-16" src="https://dl.dropbox.com/scl/fi/nx2b6zyo5cp4hwgtit12b/22-11-66-01-33-23.png?rlkey=khnfawin5mmaxg1vxq5l7nro3&dl=0">
+      <div class="title">IPTV by BK-16</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="player"><video id="v" controls playsinline muted></video></div>
+
+  
+  <div id="grid-sports" class="grid"></div>
+
+  <p class="hint">* คลิกโลโก้ช่องเพื่อเล่นทันที • ถ้าไม่ใช่สัญญาณ .m3u8 จะเปิดในแท็บใหม่</p>
+</main>
+
+<script>
+/* ====== รายการช่องกีฬา ====== */
+const sports = [
+  /* Monomax 01–11 */
+  { id:"monomax01", name:"Monomax Sport 01", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport01.png",
+    url:"https://e110.youllneverwalkalone.online/v5/FgT985UPxwObKP3AyGPHOg/1761335025/960b1d3fb316841e74fe38e2c28c6ac2/NEnesGMawHSxZRfdX4CwZA/1761345705/live/lx-origin/th-monomax01bkp_720/chunks.m3u8"},
+  { id:"monomax02", name:"Monomax Sport 02", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport02.png",
+    url:"https://la4.youllneverwalkalone.online:9310/v5/Tv7MQZUJDvFAT0MWMjkFxw/1760853187/7e082863bad9b2193b817f67ef13b2ed/fqUgsWUaPUd9a11HTNxDTQ/1760863867/live/lx-origin/th-monomax02bkp_720/chunks.m3u8"},
+  { id:"monomax03", name:"Monomax Sport 03", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport03.png",
+    url:"https://e110.youllneverwalkalone.online/v5/PztuOGVvgu04ZjTrS15CvA/1761335110/c629062a5c57f4562f64e0615a894c6f/2pxue-f6TpBJ9J_WrBtscQ/1761345790/live/lx-origin/th-monomax03bkp_720/chunks.m3u8"},
+  { id:"monomax04", name:"Monomax Sport 04", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport04.png",
+    url:"https://e110.youllneverwalkalone.online/v5/N4ZbvMEVJL8BmHiqHGhDUQ/1761333739/c629062a5c57f4562f64e0615a894c6f/U92QDnoYExC_NEpnXXqK-w/1761344419/live/lx-origin/th-monomax04bkp_720/chunks.m3u8"},
+  { id:"monomax05", name:"Monomax Sport 05", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport05.png",
+    url:"https://e110.youllneverwalkalone.online/v5/JLooajn3O91iN3bQdktHZw/1761333763/c629062a5c57f4562f64e0615a894c6f/zEkv-gZ09QgkDGxPUfbiLg/1761344443/live/lx-origin/th-monomax05_720/chunks.m3u8"},
+  { id:"monomax06", name:"Monomax Sport 06", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport06.png",
+    url:"https://e110.youllneverwalkalone.online/v5/uGrYM0Zfh4iXz3U1-Gv56Q/1761333788/c629062a5c57f4562f64e0615a894c6f/aOwr7yqds0KMb-0otIZt6Q/1761344468/live/lx-origin/th-monomax06_720/chunks.m3u8"},
+  { id:"monomax07", name:"Monomax Sport 07", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport07.png",
+    url:"https://e110.youllneverwalkalone.online/v5/m5U-tSktZNe2A72pe-6xYg/1761334662/9305869135637aac7c619f8770e12d28/P4fPurgRpv3PjPX2xvf1jw/1761345342/live/lx-origin/th-monomax07bkp_720/chunks.m3u8"},
+  { id:"monomax08", name:"Monomax Sport 08", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport08.png",
+    url:"https://e110.youllneverwalkalone.online/v5/cc1cC900uuHeqDE8IltlJg/1761334720/9305869135637aac7c619f8770e12d28/jPVKXWKbmKXxIjClogLl-Q/1761345400/live/lx-origin/th-monomax08bkp_720/chunks.m3u8"},
+  { id:"monomax09", name:"Monomax Sport 09", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport09.png",
+    url:"https://e110.youllneverwalkalone.online/v5/4JlRifIojPVgi_u8fYjIag/1761334748/9305869135637aac7c619f8770e12d28/KIMhpnUTrrvF7MKhNujMaw/1761345428/live/lx-origin/th-monomax09_720/playlist.m3u8"},
+  { id:"monomax10", name:"Monomax Sport 10", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport010.png",
+    url:"https://e110.youllneverwalkalone.online/v5/Kj1bBcwtKdq_NOW229uKsQ/1761334860/c629062a5c57f4562f64e0615a894c6f/-AupBgAC3pbipGRHvJo6Pw/1761345540/live/lx-origin/th-monomax10bkp_720/chunks.m3u8"},
+  { id:"monomax11", name:"Monomax Sport 11", logo:"https://www.img03.xyz/assets/img/ch_logo/Monomax_Sport011.png",
+    url:"https://e110.youllneverwalkalone.online/v5/xAzFrhzHDeSU4UDxURMEXA/1761338676/c629062a5c57f4562f64e0615a894c6f/X-l8p1sIYGlHrWCat4XZQg/1761349356/live/lx-origin/th-monomax11_720/chunks.m3u8"},
+
+  /* อื่น ๆ */
+  { id:"redbulltv", name:"Red Bull TV", logo:"https://img2.sport-tv-guide.live/images/tv-station-red-bull-tv-2760.png",
+    url:"https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8"},
+  { id:"spotv1", name:"SPOTV 1", logo:"https://ball67.com/assets/channels-logo/spotv1.png",
+    url:"https://e110.youllneverwalkalone.online/v5/-wZYuDDlv5yINDZnrhHLIw/1761206459/117fb934511acd03d30b2a940aa65efa/SVa10W47aJY6oOpSwR-7aw/1761217139/live/vx-origin/hd-spotv_720/playlist.m3u8"},
+  { id:"spotv2", name:"SPOTV 2", logo:"https://ball67.com/assets/channels-logo/spotv2.png",
+    url:"https://e110.youllneverwalkalone.online/v5/D8A6cYMOXKuPVM_J44Bpog/1761206423/117fb934511acd03d30b2a940aa65efa/UDTlEaxnQBJJKWO59Wg2rA/1761217103/live/vx-origin/hd-spotv2_720/playlist.m3u8"},
+  { id:"bein1", name:"beIN SPORT TH 1", logo:"https://ball67.com/assets/channels-logo/bein1.png",
+    url:"https://e110.youllneverwalkalone.online/v5/hr4gepoWVhT_iWzE-ztHWw/1761336955/9305869135637aac7c619f8770e12d28/XSJYzEJZ7l4fcZuusxP8Aw/1761347635/live/vx-origin/th-bein1_720/chunks.m3u8"},
+  { id:"bein2", name:"AIS beIN SPORT 2", logo:"https://ball67.com/assets/channels-logo/bein2.png",
+    url:"https://e110.youllneverwalkalone.online/v5/cLKmRrkUj5j5XuHqfGQQRA/1761336704/9305869135637aac7c619f8770e12d28/c5adDWA_Gg48ocKVi5j6Sw/1761347384/live/vx-origin/th-bein2_720/chunks.m3u8"},
+  { id:"bein3", name:"beIN SPORT TH 3", logo:"https://ball67.com/assets/channels-logo/bein3.png",
+url:"https://dreamt-upstart.youllneverwalkalone.online/v5/gfgmthf_D7U4K7R6iLRZwg/1761343987/c629062a5c57f4562f64e0615a894c6f/Mky-7SS683HKb1iYR118OA/1761354667/live/vx-origin/th-bein3_720/playlist.m3u8"},
+
+{ id:"True Premier Football 3", name:"True Premier Football 3", logo:"https://ball67.com/assets/channels-logo/truepremier3.png",
+url:"https://e110.youllneverwalkalone.online/v5/AkG-TMQB2BmG_4tyV8yjRQ/1761344173/c629062a5c57f4562f64e0615a894c6f/qsQICX0vO-o9V6SLAmpmAQ/1761354853/live/lx-origin/epl-4_720/chunks.m3u8"},
+
+{ id:"True Premier Football 4", name:"True Premier Football 4", logo:"https://ball67.com/assets/channels-logo/truepremier4.png",
+url:"https://dreamt-upstart.youllneverwalkalone.online/v5/MVD-zYXGTk5oRJccrJ8L0w/1761344345/c629062a5c57f4562f64e0615a894c6f/mnowcO5jZCnRuUFbPP7IDg/1761355025/live/lx-origin/epl-4_720/chunks.m3u8"},
+
+
+  { id:"lfctv", name:"LFC TV (เปิดหน้าเว็บ)", logo:"https://img2.sport-tv-guide.live/images/tv-station-lfc-tv-112.png",
+    url:"https://dookeela.live/live-tv/lfctv"} /* not m3u8 -> open new tab */
+];
+
+/* ====== Player logic ====== */
+const v = document.getElementById('v');
+const gridSports = document.getElementById('grid-sports');
+let _hls = null;
+let currentId = null;
+
+const isHls = (u) => /\.m3u8($|\?)/i.test(u);
+
+function playUrl(url){
+  if (!isHls(url)) { window.open(url, '_blank'); return; } // เปิดเว็บแทน
+  if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    v.src = url;
+    v.play().catch(()=>{});
+  } else if (window.Hls && Hls.isSupported()) {
+    if (_hls) _hls.destroy();
+    _hls = new Hls();
+    _hls.loadSource(url);
+    _hls.attachMedia(v);
+    _hls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(()=>{}));
+  } else {
+    alert('เบราว์เซอร์นี้ไม่รองรับ HLS');
+  }
+}
+
+function setActive(id){
+  [...document.querySelectorAll('.ch')].forEach(el => el.classList.toggle('active', el.dataset.id===id));
+  currentId = id;
+}
+
+function renderGrid(){
+  gridSports.innerHTML = '';
+  sports.forEach(c=>{
+    const d = document.createElement('div');
+    d.className='ch';
+    d.dataset.id = c.id;
+    d.innerHTML = `<img src="${c.logo}" alt="${c.name}"><div class="name">${c.name}</div>`;
+    d.onclick = () => { setActive(c.id); playUrl(c.url); };
+    gridSports.appendChild(d);
+  });
+}
+
+renderGrid();
+/* เล่นช่องแรกอัตโนมัติ */
+if (sports[0]) { setActive(sports[0].id); playUrl(sports[0].url); }
+</script>
+</body>
+</html>
