@@ -10,7 +10,6 @@
     --bg1:#0b1220;
     --bg2:#08101d;
     --panel:#0f172a;
-    --panel2:#111c33;
     --border:#334155;
     --muted:#9fb2c7;
     --brand1:#17c1d6;
@@ -105,11 +104,6 @@
   #status.bad{color:var(--bad)}
   #status.ok{color:var(--ok)}
 
-  #status a{
-    color:#67e8f9;
-    text-decoration:underline;
-  }
-
   .grid{
     display:flex;
     flex-wrap:wrap;
@@ -178,7 +172,7 @@
     line-height:1.5;
   }
 
-  /* ===== EXT Modal ===== */
+  /* ===== Fallback Modal ===== */
   .modal-backdrop{
     position:fixed;
     inset:0;
@@ -196,7 +190,7 @@
   }
 
   .modal{
-    width:min(560px,100%);
+    width:min(520px,100%);
     background:linear-gradient(180deg,#111c33,#0b1220);
     border:1px solid rgba(255,255,255,.16);
     border-radius:18px;
@@ -263,17 +257,6 @@
     line-height:1.5;
   }
 
-  .url-box{
-    margin:10px 0 12px;
-    padding:9px 10px;
-    border-radius:10px;
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.10);
-    color:#cbd5e1;
-    font-size:12px;
-    word-break:break-all;
-  }
-
   .btn-grid{
     display:grid;
     grid-template-columns:1fr;
@@ -285,12 +268,12 @@
     border:1px solid rgba(255,255,255,.12);
     background:#111c33;
     color:#fff;
-    padding:11px 12px;
+    padding:12px 13px;
     border-radius:12px;
     cursor:pointer;
     text-align:left;
-    font-weight:800;
-    transition:transform .12s ease, background .12s ease;
+    font-weight:900;
+    transition:transform .12s ease, background .12s ease, opacity .12s ease;
   }
 
   .action-btn:hover{
@@ -315,12 +298,14 @@
     border-color:rgba(250,204,21,.35);
   }
 
-  .action-btn.danger{
-    border-color:rgba(252,165,165,.35);
+  .action-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+    transform:none;
   }
 
   @media (min-width:520px){
-    .btn-grid.two{
+    .btn-grid{
       grid-template-columns:1fr 1fr;
     }
   }
@@ -349,59 +334,37 @@
   <div id="grid-sports" class="grid"></div>
 
   <p class="hint">
-    * คลิกโลโก้ช่องเพื่อเล่นทันที • ช่อง EXT จะมีตัวเลือกเปิดด้วยแอปภายนอก เช่น VLC / Wiseplay / Liftplay / HLS Player
+    * เว็บไซต์จะลองเล่นบนหน้านี้ก่อน • หากเล่นไม่ได้ ระบบจะแสดงตัวเลือกเปิดด้วยแอปบน Android หรือเปิดแท็บใหม่สำหรับ PC ที่มี HLS Player Extension
   </p>
 </main>
 
-<!-- ===== EXT Modal ===== -->
-<div id="extModal" class="modal-backdrop">
+<!-- ===== Fallback Modal ===== -->
+<div id="fallbackModal" class="modal-backdrop">
   <div class="modal">
     <div class="modal-head">
       <img id="modalLogo" src="" alt="">
       <div class="modal-title">
         <strong id="modalName">External Channel</strong>
-        <span id="modalSub">เลือกวิธีเปิดช่องนี้</span>
+        <span id="modalSub">ช่องนี้เล่นบนหน้าเว็บไม่ได้</span>
       </div>
       <button class="close-btn" id="closeModal" title="ปิด">×</button>
     </div>
 
     <div class="modal-body">
-      <p class="modal-note">
-        ช่องนี้อาจเล่นในเว็บโดยตรงไม่ได้ เพราะ stream ภายในติด HTTP / Mixed Content / app-only behavior
-        ให้เลือกเปิดด้วยแอป player แทน
+      <p class="modal-note" id="modalNote">
+        ระบบลองเล่นบนหน้าเว็บแล้ว แต่ stream นี้อาจติด Mixed Content / CORS / app-only behavior
+        กรุณาเลือกวิธีเปิดด้านล่าง
       </p>
 
-      <div id="modalUrl" class="url-box"></div>
-
-      <div class="btn-grid two">
+      <div class="btn-grid">
         <button class="action-btn primary" id="btnAndroidChooser">
           เปิดด้วยแอปบน Android
           <small>ให้ระบบเลือก VLC / Wiseplay / Liftplay หรือแอปที่รองรับ HLS</small>
         </button>
 
-        <button class="action-btn" id="btnVlcAndroid">
-          เปิดด้วย VLC Android
-          <small>บังคับเรียก VLC โดยตรง ถ้าไม่มีแอปจะพาไป Google Play</small>
-        </button>
-
-        <button class="action-btn" id="btnShare">
-          Share link
-          <small>ส่งลิงก์ไปยังแอป player ผ่านเมนูแชร์ของมือถือ</small>
-        </button>
-
-        <button class="action-btn" id="btnCopy">
-          Copy link
-          <small>คัดลอกลิงก์ แล้วนำไปวางใน VLC / Wiseplay / Liftplay</small>
-        </button>
-
         <button class="action-btn warn" id="btnOpenTab">
           เปิดแท็บใหม่
           <small>เหมาะกับ PC ที่มี HLS Player Extension</small>
-        </button>
-
-        <button class="action-btn danger" id="btnTryWeb">
-          ลองเล่นในเว็บ
-          <small>ใช้เมื่อ stream เปลี่ยนเป็น HTTPS ทั้งสายแล้ว</small>
         </button>
       </div>
     </div>
@@ -438,27 +401,26 @@ const sports = [
     url:"https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8"
   },
 
-  /* Monomax EXT */
   {
     id:"monomax01",
     name:"Monomax Sport 01",
     logo:"https://img1.pic.in.th/images/011c7ba4fae8fe556a4.png",
     url:"https://blive99.github.io/m3u8/sporttv/monomax1.m3u8",
-    externalOnly:true
+    fallback:true
   },
   {
     id:"monomax02",
     name:"Monomax Sport 02",
     logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
     url:"https://blive99.github.io/m3u8/sporttv/monomax2.m3u8",
-    externalOnly:true
+    fallback:true
   },
   {
     id:"monomax03",
     name:"Monomax Sport 03",
     logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
     url:"https://blive99.github.io/m3u8/sporttv/monomax3.m3u8",
-    externalOnly:true
+    fallback:true
   },
 
   {
@@ -480,46 +442,48 @@ const sports = [
     url:"https://blive99.github.io/m3u8/sporttv/truespotv.m3u8"
   },
 
-  /* HTTP links are EXT because GitHub Pages is HTTPS */
   {
     id:"bein1",
     name:"beIN SPORT TH 1",
     logo:"https://ball67.com/assets/channels-logo/bein1.png",
     url:"http://54.37.19.157/bein1/tracks-v1a1/mono.m3u8",
-    externalOnly:true
+    fallback:true
   },
   {
     id:"bein2",
     name:"AIS beIN SPORT 2",
     logo:"https://ball67.com/assets/channels-logo/bein2.png",
     url:"http://54.37.19.157/bein2/tracks-v1a1/mono.m3u8",
-    externalOnly:true
+    fallback:true
   },
   {
     id:"bein3",
     name:"beIN SPORT TH 3",
     logo:"https://ball67.com/assets/channels-logo/bein3.png",
     url:"http://54.37.19.157/bein3/tracks-v1a1/mono.m3u8",
-    externalOnly:true
+    fallback:true
   },
 
   {
     id:"truesport1",
     name:"True Sport 1",
     logo:"https://img2.pic.in.th/true1.png",
-    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8",
+    fallback:true
   },
   {
     id:"truesport2",
     name:"True Sport 2",
     logo:"https://img1.pic.in.th/images/true2.png",
-    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8",
+    fallback:true
   },
   {
     id:"truesport3",
     name:"True Sport 3",
     logo:"https://img1.pic.in.th/images/true3.png",
-    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8",
+    fallback:true
   },
 
   {
@@ -527,7 +491,7 @@ const sports = [
     name:"LFC TV",
     logo:"https://img2.sport-tv-guide.live/images/tv-station-lfc-tv-112.png",
     url:"https://dooballplus2.live/channels/lfctv/",
-    externalOnly:true
+    fallback:true
   }
 ];
 
@@ -539,22 +503,21 @@ const v = document.getElementById('v');
 const gridSports = document.getElementById('grid-sports');
 const statusBox = document.getElementById('status');
 
-const extModal = document.getElementById('extModal');
+const fallbackModal = document.getElementById('fallbackModal');
 const modalLogo = document.getElementById('modalLogo');
 const modalName = document.getElementById('modalName');
-const modalUrl = document.getElementById('modalUrl');
+const modalNote = document.getElementById('modalNote');
 const closeModal = document.getElementById('closeModal');
 
 const btnAndroidChooser = document.getElementById('btnAndroidChooser');
-const btnVlcAndroid = document.getElementById('btnVlcAndroid');
-const btnShare = document.getElementById('btnShare');
-const btnCopy = document.getElementById('btnCopy');
 const btnOpenTab = document.getElementById('btnOpenTab');
-const btnTryWeb = document.getElementById('btnTryWeb');
 
 let _hls = null;
 let currentId = null;
-let selectedExternalChannel = null;
+let selectedChannel = null;
+let fallbackTimer = null;
+let playToken = 0;
+let modalAlreadyShownForToken = false;
 
 
 /* ==============================
@@ -568,6 +531,10 @@ function isAndroid(){
 
 function isIOS(){
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function isDesktopLike(){
+  return !isAndroid() && !isIOS();
 }
 
 function escapeHtml(text){
@@ -585,13 +552,9 @@ function setStatus(msg, type='normal'){
   statusBox.classList.toggle('ok', type === 'ok');
 }
 
-function setStatusHtml(html, type='normal'){
-  statusBox.innerHTML = html;
-  statusBox.classList.toggle('bad', type === 'bad');
-  statusBox.classList.toggle('ok', type === 'ok');
-}
-
 function stopCurrentStream(){
+  clearFallbackTimer();
+
   if (_hls) {
     _hls.destroy();
     _hls = null;
@@ -602,33 +565,18 @@ function stopCurrentStream(){
   v.load();
 }
 
+function clearFallbackTimer(){
+  if (fallbackTimer) {
+    clearTimeout(fallbackTimer);
+    fallbackTimer = null;
+  }
+}
+
 function setActive(id){
   document.querySelectorAll('.ch').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
   currentId = id;
-}
-
-async function copyToClipboard(text){
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.left = '-9999px';
-  ta.style.top = '-9999px';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-
-  try {
-    document.execCommand('copy');
-  } finally {
-    document.body.removeChild(ta);
-  }
 }
 
 function safeParseUrl(url){
@@ -641,13 +589,10 @@ function safeParseUrl(url){
 
 
 /* ==============================
-   Android Intent Builder
-   - Generic chooser: no package
-   - VLC direct: package=org.videolan.vlc
+   Android Intent
 ================================= */
-function buildAndroidIntent(url, packageName=''){
+function buildAndroidIntent(url){
   const parsed = safeParseUrl(url);
-
   if (!parsed) return url;
 
   const scheme = parsed.protocol.replace(':','');
@@ -657,203 +602,169 @@ function buildAndroidIntent(url, packageName=''){
   intent += `scheme=${scheme};`;
   intent += `action=android.intent.action.VIEW;`;
   intent += `type=application/vnd.apple.mpegurl;`;
-
-  if (packageName) {
-    intent += `package=${packageName};`;
-    intent += `S.browser_fallback_url=${encodeURIComponent('https://play.google.com/store/apps/details?id=' + packageName)};`;
-  } else {
-    intent += `S.browser_fallback_url=${encodeURIComponent(url)};`;
-  }
-
+  intent += `S.browser_fallback_url=${encodeURIComponent(url)};`;
   intent += `end`;
 
   return intent;
 }
 
 function openAndroidChooser(url){
-  const intentUrl = buildAndroidIntent(url);
-  window.location.href = intentUrl;
-}
-
-function openVlcAndroid(url){
-  const intentUrl = buildAndroidIntent(url, 'org.videolan.vlc');
-  window.location.href = intentUrl;
+  window.location.href = buildAndroidIntent(url);
 }
 
 
 /* ==============================
-   iOS helper
-   ทดลองเปิด VLC iOS แบบ best-effort
-   หมายเหตุ: iOS/player app แต่ละตัวอาจรองรับ scheme ไม่เหมือนกัน
+   Fallback Modal
 ================================= */
-function tryOpenVlcIOS(url){
-  const vlcUrl = `vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(url)}`;
+function openFallbackModal(channel, reason=''){
+  if (!channel) return;
 
-  setStatus('กำลังทดลองเปิด VLC บน iOS ถ้าไม่เด้ง ให้ใช้ Share link หรือ Copy link แทน', 'normal');
-
-  window.location.href = vlcUrl;
-
-  setTimeout(() => {
-    setStatus('ถ้า VLC ไม่เปิด ให้กด Share link หรือ Copy link แล้วนำไปเปิดในแอป player', 'bad');
-  }, 1400);
-}
-
-
-/* ==============================
-   Modal
-================================= */
-function openExtModal(channel){
-  selectedExternalChannel = channel;
+  selectedChannel = channel;
   stopCurrentStream();
 
   modalLogo.src = channel.logo || '';
   modalLogo.alt = channel.name || '';
   modalName.textContent = channel.name || 'External Channel';
-  modalUrl.textContent = channel.url || '';
 
-  extModal.classList.add('show');
+  if (isIOS()) {
+    modalNote.textContent =
+      'ระบบลองเล่นบนหน้าเว็บแล้ว แต่ช่องนี้เล่นไม่ได้บน iPhone/iPad ผ่านเว็บโดยตรง ขณะนี้ iOS ไม่สามารถเรียก App Chooser แบบ Android ได้จากหน้าเว็บนี้';
+    btnAndroidChooser.disabled = true;
+  } else {
+    modalNote.textContent =
+      'ระบบลองเล่นบนหน้าเว็บแล้ว แต่ stream นี้อาจติด Mixed Content / CORS / app-only behavior กรุณาเลือกวิธีเปิดด้านล่าง';
+    btnAndroidChooser.disabled = false;
+  }
 
-  const safeName = escapeHtml(channel.name);
-  setStatusHtml(`เลือกวิธีเปิด <b>${safeName}</b> จากหน้าต่าง EXT`, 'normal');
+  fallbackModal.classList.add('show');
+
+  if (reason) {
+    setStatus(`เล่นบนหน้าเว็บไม่ได้: ${reason}`, 'bad');
+  } else {
+    setStatus('เล่นบนหน้าเว็บไม่ได้ กรุณาเลือกวิธีเปิดอื่น', 'bad');
+  }
 }
 
-function closeExtModal(){
-  extModal.classList.remove('show');
+function closeFallbackModal(){
+  fallbackModal.classList.remove('show');
 }
 
-closeModal.onclick = closeExtModal;
+closeModal.onclick = closeFallbackModal;
 
-extModal.addEventListener('click', (e) => {
-  if (e.target === extModal) closeExtModal();
+fallbackModal.addEventListener('click', (e) => {
+  if (e.target === fallbackModal) closeFallbackModal();
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeExtModal();
+  if (e.key === 'Escape') closeFallbackModal();
 });
 
 
 /* ==============================
-   EXT Buttons
+   Fallback Buttons
 ================================= */
 btnAndroidChooser.onclick = () => {
-  if (!selectedExternalChannel) return;
+  if (!selectedChannel) return;
 
   if (!isAndroid()) {
-    setStatus('ปุ่มนี้เหมาะกับ Android เท่านั้น บน PC ให้ใช้เปิดแท็บใหม่ / บน iPhone ให้ใช้ Share หรือ Copy', 'bad');
+    setStatus('ปุ่มนี้ใช้ได้บน Android เท่านั้น เพราะ iPhone/iPad ไม่มี App Chooser แบบ Android จากเว็บทั่วไป', 'bad');
     return;
   }
 
-  setStatus('กำลังเปิด Android App Chooser เพื่อเลือก VLC / Wiseplay / Liftplay...', 'normal');
-  openAndroidChooser(selectedExternalChannel.url);
-};
-
-btnVlcAndroid.onclick = () => {
-  if (!selectedExternalChannel) return;
-
-  if (!isAndroid()) {
-    setStatus('ปุ่ม VLC Android ใช้กับ Android เท่านั้น', 'bad');
-    return;
-  }
-
-  setStatus('กำลังเปิด VLC Android...', 'normal');
-  openVlcAndroid(selectedExternalChannel.url);
-};
-
-btnShare.onclick = async () => {
-  if (!selectedExternalChannel) return;
-
-  const shareData = {
-    title: selectedExternalChannel.name,
-    text: selectedExternalChannel.name,
-    url: selectedExternalChannel.url
-  };
-
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-      setStatus('เปิดเมนู Share แล้ว ให้เลือก VLC / Wiseplay / Liftplay หรือแอป player ที่มีในเครื่อง', 'ok');
-    } catch (err) {
-      setStatus('ยกเลิกการ Share หรือ Share ไม่สำเร็จ', 'bad');
-    }
-  } else {
-    try {
-      await copyToClipboard(selectedExternalChannel.url);
-      setStatus('อุปกรณ์นี้ไม่มี Web Share — คัดลอกลิงก์ให้แล้ว', 'ok');
-    } catch (err) {
-      setStatus('คัดลอกลิงก์ไม่สำเร็จ', 'bad');
-    }
-  }
-};
-
-btnCopy.onclick = async () => {
-  if (!selectedExternalChannel) return;
-
-  try {
-    await copyToClipboard(selectedExternalChannel.url);
-    setStatus('คัดลอกลิงก์แล้ว ให้นำไปวางใน VLC / Wiseplay / Liftplay', 'ok');
-  } catch (err) {
-    setStatus('คัดลอกลิงก์ไม่สำเร็จ กรุณากดค้างที่ลิงก์แล้ว copy เอง', 'bad');
-  }
+  setStatus('กำลังเปิดตัวเลือกแอปบน Android...', 'normal');
+  openAndroidChooser(selectedChannel.url);
 };
 
 btnOpenTab.onclick = () => {
-  if (!selectedExternalChannel) return;
+  if (!selectedChannel) return;
 
-  const win = window.open(selectedExternalChannel.url, '_blank', 'noopener,noreferrer');
+  const win = window.open(selectedChannel.url, '_blank', 'noopener,noreferrer');
 
   if (win) {
-    setStatus('เปิดแท็บใหม่แล้ว ถ้าเป็น Chrome PC ให้ HLS Player Extension รับช่วงต่อ', 'ok');
+    setStatus('เปิดแท็บใหม่แล้ว เหมาะกับ PC ที่มี HLS Player Extension', 'ok');
   } else {
-    setStatus('เบราว์เซอร์บล็อก popup กรุณาอนุญาต popup หรือใช้ Copy link', 'bad');
+    setStatus('เบราว์เซอร์บล็อก popup กรุณาอนุญาต popup แล้วลองอีกครั้ง', 'bad');
   }
-};
-
-btnTryWeb.onclick = () => {
-  if (!selectedExternalChannel) return;
-
-  closeExtModal();
-  setStatus('กำลังลองเล่นในเว็บ ถ้ายังติด Mixed Content จะเล่นไม่ได้', 'normal');
-  playUrl(selectedExternalChannel.url, true);
 };
 
 
 /* ==============================
-   Player
+   Main play flow
 ================================= */
-function playUrl(url, forceTry=false){
-  setStatus('กำลังโหลดสัญญาณ...', 'normal');
+function showFallbackOnce(channel, token, reason){
+  if (token !== playToken) return;
+  if (modalAlreadyShownForToken) return;
 
-  if (!forceTry && url.startsWith('http://')) {
-    setStatus('ช่องนี้เป็น HTTP จึงเล่นบนเว็บ HTTPS ไม่ได้ ให้เปิดด้วย EXT player', 'bad');
+  modalAlreadyShownForToken = true;
+  openFallbackModal(channel, reason);
+}
+
+function startFallbackWatch(channel, token){
+  clearFallbackTimer();
+
+  fallbackTimer = setTimeout(() => {
+    const isPlaying = !v.paused && !v.ended && v.readyState >= 2;
+
+    if (!isPlaying) {
+      showFallbackOnce(channel, token, 'โหลดสัญญาณนานเกินไป');
+    }
+  }, 9000);
+}
+
+function playChannel(channel){
+  selectedChannel = channel;
+  closeFallbackModal();
+
+  playToken++;
+  const token = playToken;
+  modalAlreadyShownForToken = false;
+
+  setActive(channel.id);
+  setStatus(`กำลังลองเล่น ${channel.name} บนหน้าเว็บ...`, 'normal');
+
+  stopCurrentStream();
+
+  const url = channel.url;
+
+  if (url.startsWith('http://')) {
+    showFallbackOnce(channel, token, 'ลิงก์เป็น HTTP จึงเล่นบนเว็บ HTTPS ไม่ได้');
     return;
   }
 
   if (!isHls(url)) {
-    stopCurrentStream();
     const win = window.open(url, '_blank', 'noopener,noreferrer');
-
     if (win) {
       setStatus('เปิดหน้าเว็บภายนอกแล้ว', 'ok');
     } else {
-      setStatus('เบราว์เซอร์บล็อก popup', 'bad');
+      showFallbackOnce(channel, token, 'ไม่สามารถเปิดหน้าเว็บภายนอกได้');
     }
-
     return;
   }
 
-  if (_hls) {
-    _hls.destroy();
-    _hls = null;
-  }
-
-  v.removeAttribute('src');
-  v.load();
+  startFallbackWatch(channel, token);
 
   if (v.canPlayType('application/vnd.apple.mpegurl')) {
     v.src = url;
+
+    v.onplaying = () => {
+      if (token !== playToken) return;
+      clearFallbackTimer();
+      setStatus(`กำลังเล่น ${channel.name}`, 'ok');
+    };
+
+    v.onerror = () => {
+      showFallbackOnce(channel, token, 'HTML5 video error');
+    };
+
     v.play()
-      .then(() => setStatus('กำลังเล่น', 'ok'))
-      .catch(err => setStatus('เล่นไม่ได้: ' + err.message, 'bad'));
+      .then(() => {
+        if (token !== playToken) return;
+        setStatus(`กำลังเล่น ${channel.name}`, 'ok');
+      })
+      .catch(err => {
+        showFallbackOnce(channel, token, err.message || 'play error');
+      });
+
     return;
   }
 
@@ -869,37 +780,53 @@ function playUrl(url, forceTry=false){
     _hls.attachMedia(v);
 
     _hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      setStatus('โหลดสัญญาณสำเร็จ กำลังเล่น...', 'normal');
+      if (token !== playToken) return;
+
+      setStatus('โหลด playlist สำเร็จ กำลังเล่น...', 'normal');
+
       v.play()
-        .then(() => setStatus('กำลังเล่น', 'ok'))
-        .catch(err => setStatus('Autoplay error: ' + err.message, 'bad'));
+        .then(() => {
+          if (token !== playToken) return;
+          clearFallbackTimer();
+          setStatus(`กำลังเล่น ${channel.name}`, 'ok');
+        })
+        .catch(err => {
+          showFallbackOnce(channel, token, err.message || 'autoplay error');
+        });
     });
 
     _hls.on(Hls.Events.ERROR, (event, data) => {
+      if (token !== playToken) return;
+
       console.warn('HLS ERROR:', data);
 
-      let msg = `HLS Error: ${data.type} / ${data.details}`;
+      const details = data.details || 'unknown';
+      const type = data.type || 'unknown';
 
-      if (data.details && String(data.details).includes('manifestLoadError')) {
-        msg += ' — อาจติด CORS / Mixed Content / server block';
-      }
+      const shouldFallback =
+        data.fatal ||
+        details.includes('manifestLoadError') ||
+        details.includes('levelLoadError') ||
+        details.includes('fragLoadError') ||
+        details.includes('bufferStalledError');
 
-      setStatus(msg, data.fatal ? 'bad' : 'normal');
-
-      if (data.fatal) {
-        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-          _hls.recoverMediaError();
-        } else {
-          _hls.destroy();
-          _hls = null;
-        }
+      if (shouldFallback) {
+        showFallbackOnce(channel, token, `${type} / ${details}`);
+      } else {
+        setStatus(`HLS warning: ${type} / ${details}`, 'normal');
       }
     });
+
+    v.addEventListener('playing', () => {
+      if (token !== playToken) return;
+      clearFallbackTimer();
+      setStatus(`กำลังเล่น ${channel.name}`, 'ok');
+    }, { once:true });
 
     return;
   }
 
-  setStatus('เบราว์เซอร์นี้ไม่รองรับ HLS', 'bad');
+  showFallbackOnce(channel, token, 'เบราว์เซอร์นี้ไม่รองรับ HLS');
 }
 
 
@@ -912,10 +839,10 @@ function renderGrid(){
   sports.forEach(c => {
     const d = document.createElement('div');
 
-    d.className = c.externalOnly ? 'ch external' : 'ch';
+    d.className = c.fallback ? 'ch external' : 'ch';
     d.dataset.id = c.id;
 
-    const badge = c.externalOnly ? '<div class="badge">EXT</div>' : '';
+    const badge = c.fallback ? '<div class="badge">AUTO</div>' : '';
 
     d.innerHTML = `
       ${badge}
@@ -923,16 +850,7 @@ function renderGrid(){
       <div class="name">${escapeHtml(c.name)}</div>
     `;
 
-    d.onclick = () => {
-      setActive(c.id);
-
-      if (c.externalOnly) {
-        openExtModal(c);
-        return;
-      }
-
-      playUrl(c.url);
-    };
+    d.onclick = () => playChannel(c);
 
     gridSports.appendChild(d);
   });
@@ -941,11 +859,10 @@ function renderGrid(){
 renderGrid();
 
 /* Auto play first normal channel */
-const firstPlayable = sports.find(c => !c.externalOnly);
+const firstPlayable = sports.find(c => !c.fallback);
 
 if (firstPlayable) {
-  setActive(firstPlayable.id);
-  playUrl(firstPlayable.url);
+  playChannel(firstPlayable);
 }
 </script>
 </body>
