@@ -127,15 +127,12 @@
   .ch:hover{
     transform:translateY(-1px);
     background:#0b1220;
+    border-color:rgba(23,193,214,.55);
   }
 
   .ch.active{
     outline:2px solid var(--brand1);
     box-shadow:0 0 0 3px rgba(23,193,214,.25) inset;
-  }
-
-  .ch.external{
-    border-color:rgba(250,204,21,.65);
   }
 
   .ch img{
@@ -152,18 +149,6 @@
     min-height:34px;
   }
 
-  .badge{
-    position:absolute;
-    top:6px;
-    right:6px;
-    padding:2px 6px;
-    border-radius:999px;
-    font-size:10px;
-    font-weight:900;
-    color:#111827;
-    background:var(--warn);
-  }
-
   .hint{
     margin:10px 0 0;
     text-align:center;
@@ -172,7 +157,7 @@
     line-height:1.5;
   }
 
-  /* ===== Fallback Modal ===== */
+  /* ===== Player Modal for Mobile ===== */
   .modal-backdrop{
     position:fixed;
     inset:0;
@@ -273,7 +258,7 @@
     cursor:pointer;
     text-align:left;
     font-weight:900;
-    transition:transform .12s ease, background .12s ease, opacity .12s ease;
+    transition:transform .12s ease, background .12s ease;
   }
 
   .action-btn:hover{
@@ -296,12 +281,6 @@
 
   .action-btn.warn{
     border-color:rgba(250,204,21,.35);
-  }
-
-  .action-btn:disabled{
-    opacity:.45;
-    cursor:not-allowed;
-    transform:none;
   }
 
   @media (min-width:520px){
@@ -329,42 +308,41 @@
     <video id="v" controls playsinline muted></video>
   </div>
 
-  <div id="status"></div>
+  <div id="status">เลือกช่องเพื่อเริ่มเล่น</div>
 
   <div id="grid-sports" class="grid"></div>
 
   <p class="hint">
-    * เว็บไซต์จะลองเล่นบนหน้านี้ก่อน • หากเล่นไม่ได้ ระบบจะแสดงตัวเลือกเปิดด้วยแอปบน Android หรือเปิดแท็บใหม่สำหรับ PC ที่มี HLS Player Extension
+    * ระบบจะลองเล่นบนหน้าเว็บไซต์ก่อน หากเล่นไม่ได้: PC จะเปิดแท็บใหม่, Android จะเลือกแอป player, iPhone/iPad จะใช้เมนูแชร์ไปยังแอป player
   </p>
 </main>
 
-<!-- ===== Fallback Modal ===== -->
-<div id="fallbackModal" class="modal-backdrop">
+<!-- ===== Mobile fallback modal ===== -->
+<div id="playerModal" class="modal-backdrop">
   <div class="modal">
     <div class="modal-head">
       <img id="modalLogo" src="" alt="">
       <div class="modal-title">
-        <strong id="modalName">External Channel</strong>
-        <span id="modalSub">ช่องนี้เล่นบนหน้าเว็บไม่ได้</span>
+        <strong id="modalName">External Player</strong>
+        <span id="modalSub">เลือกวิธีเปิดช่องนี้</span>
       </div>
       <button class="close-btn" id="closeModal" title="ปิด">×</button>
     </div>
 
     <div class="modal-body">
       <p class="modal-note" id="modalNote">
-        ระบบลองเล่นบนหน้าเว็บแล้ว แต่ stream นี้อาจติด Mixed Content / CORS / app-only behavior
-        กรุณาเลือกวิธีเปิดด้านล่าง
+        ช่องนี้เล่นบนหน้าเว็บไซต์ไม่ได้ กรุณาเปิดด้วยแอป player ภายนอก
       </p>
 
       <div class="btn-grid">
-        <button class="action-btn primary" id="btnAndroidChooser">
-          เปิดด้วยแอปบน Android
-          <small>ให้ระบบเลือก VLC / Wiseplay / Liftplay หรือแอปที่รองรับ HLS</small>
+        <button class="action-btn primary" id="btnMobilePlayer">
+          เปิดด้วยแอป Player
+          <small id="btnMobilePlayerSmall">เลือก VLC / Wiseplay / Liftplay หรือแอปที่รองรับ HLS</small>
         </button>
 
         <button class="action-btn warn" id="btnOpenTab">
           เปิดแท็บใหม่
-          <small>เหมาะกับ PC ที่มี HLS Player Extension</small>
+          <small>ใช้เมื่อ browser หรือแอปในเครื่องสามารถรับลิงก์นี้ไปเล่นต่อได้</small>
         </button>
       </div>
     </div>
@@ -374,6 +352,7 @@
 <script>
 /* ==============================
    Channel list
+   ทุกช่องจะลองเล่นบนเว็บไซต์ก่อน ถ้าไม่ผ่านค่อย fallback
 ================================= */
 const sports = [
   {
@@ -405,22 +384,19 @@ const sports = [
     id:"monomax01",
     name:"Monomax Sport 01",
     logo:"https://img1.pic.in.th/images/011c7ba4fae8fe556a4.png",
-    url:"https://blive99.github.io/m3u8/sporttv/monomax1.m3u8",
-    fallback:true
+    url:"https://blive99.github.io/m3u8/sporttv/monomax1.m3u8"
   },
   {
     id:"monomax02",
     name:"Monomax Sport 02",
     logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
-    url:"https://blive99.github.io/m3u8/sporttv/monomax2.m3u8",
-    fallback:true
+    url:"https://blive99.github.io/m3u8/sporttv/monomax2.m3u8"
   },
   {
     id:"monomax03",
     name:"Monomax Sport 03",
     logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
-    url:"https://blive99.github.io/m3u8/sporttv/monomax3.m3u8",
-    fallback:true
+    url:"https://blive99.github.io/m3u8/sporttv/monomax3.m3u8"
   },
 
   {
@@ -446,52 +422,45 @@ const sports = [
     id:"bein1",
     name:"beIN SPORT TH 1",
     logo:"https://ball67.com/assets/channels-logo/bein1.png",
-    url:"http://54.37.19.157/bein1/tracks-v1a1/mono.m3u8",
-    fallback:true
+    url:"http://54.37.19.157/bein1/tracks-v1a1/mono.m3u8"
   },
   {
     id:"bein2",
     name:"AIS beIN SPORT 2",
     logo:"https://ball67.com/assets/channels-logo/bein2.png",
-    url:"http://54.37.19.157/bein2/tracks-v1a1/mono.m3u8",
-    fallback:true
+    url:"http://54.37.19.157/bein2/tracks-v1a1/mono.m3u8"
   },
   {
     id:"bein3",
     name:"beIN SPORT TH 3",
     logo:"https://ball67.com/assets/channels-logo/bein3.png",
-    url:"http://54.37.19.157/bein3/tracks-v1a1/mono.m3u8",
-    fallback:true
+    url:"http://54.37.19.157/bein3/tracks-v1a1/mono.m3u8"
   },
 
   {
     id:"truesport1",
     name:"True Sport 1",
     logo:"https://img2.pic.in.th/true1.png",
-    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8",
-    fallback:true
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
   },
   {
     id:"truesport2",
     name:"True Sport 2",
     logo:"https://img1.pic.in.th/images/true2.png",
-    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8",
-    fallback:true
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
   },
   {
     id:"truesport3",
     name:"True Sport 3",
     logo:"https://img1.pic.in.th/images/true3.png",
-    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8",
-    fallback:true
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
   },
 
   {
     id:"lfctv",
     name:"LFC TV",
     logo:"https://img2.sport-tv-guide.live/images/tv-station-lfc-tv-112.png",
-    url:"https://dooballplus2.live/channels/lfctv/",
-    fallback:true
+    url:"https://dooballplus2.live/channels/lfctv/"
   }
 ];
 
@@ -503,39 +472,44 @@ const v = document.getElementById('v');
 const gridSports = document.getElementById('grid-sports');
 const statusBox = document.getElementById('status');
 
-const fallbackModal = document.getElementById('fallbackModal');
+const playerModal = document.getElementById('playerModal');
 const modalLogo = document.getElementById('modalLogo');
 const modalName = document.getElementById('modalName');
 const modalNote = document.getElementById('modalNote');
 const closeModal = document.getElementById('closeModal');
 
-const btnAndroidChooser = document.getElementById('btnAndroidChooser');
+const btnMobilePlayer = document.getElementById('btnMobilePlayer');
+const btnMobilePlayerSmall = document.getElementById('btnMobilePlayerSmall');
 const btnOpenTab = document.getElementById('btnOpenTab');
 
 let _hls = null;
-let currentId = null;
 let selectedChannel = null;
 let fallbackTimer = null;
 let playToken = 0;
-let modalAlreadyShownForToken = false;
+let fallbackShown = false;
 
 
 /* ==============================
-   Utilities
+   Device detection
 ================================= */
-const isHls = (u) => /\.m3u8($|\?)/i.test(u);
-
 function isAndroid(){
   return /Android/i.test(navigator.userAgent);
 }
 
 function isIOS(){
-  return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 }
 
-function isDesktopLike(){
+function isDesktop(){
   return !isAndroid() && !isIOS();
 }
+
+
+/* ==============================
+   Helpers
+================================= */
+const isHls = (u) => /\.m3u8($|\?)/i.test(u);
 
 function escapeHtml(text){
   return String(text)
@@ -552,6 +526,13 @@ function setStatus(msg, type='normal'){
   statusBox.classList.toggle('ok', type === 'ok');
 }
 
+function clearFallbackTimer(){
+  if (fallbackTimer) {
+    clearTimeout(fallbackTimer);
+    fallbackTimer = null;
+  }
+}
+
 function stopCurrentStream(){
   clearFallbackTimer();
 
@@ -563,20 +544,14 @@ function stopCurrentStream(){
   v.pause();
   v.removeAttribute('src');
   v.load();
-}
-
-function clearFallbackTimer(){
-  if (fallbackTimer) {
-    clearTimeout(fallbackTimer);
-    fallbackTimer = null;
-  }
+  v.onplaying = null;
+  v.onerror = null;
 }
 
 function setActive(id){
   document.querySelectorAll('.ch').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
-  currentId = id;
 }
 
 function safeParseUrl(url){
@@ -587,12 +562,23 @@ function safeParseUrl(url){
   }
 }
 
+function openExternalTab(channel){
+  const win = window.open(channel.url, '_blank', 'noopener,noreferrer');
+
+  if (win) {
+    setStatus(`เปิด ${channel.name} ในแท็บใหม่แล้ว`, 'ok');
+  } else {
+    setStatus('เบราว์เซอร์บล็อก popup กรุณาอนุญาต popup แล้วลองอีกครั้ง', 'bad');
+  }
+}
+
 
 /* ==============================
    Android Intent
 ================================= */
 function buildAndroidIntent(url){
   const parsed = safeParseUrl(url);
+
   if (!parsed) return url;
 
   const scheme = parsed.protocol.replace(':','');
@@ -601,6 +587,7 @@ function buildAndroidIntent(url){
   let intent = `intent://${hostPath}#Intent;`;
   intent += `scheme=${scheme};`;
   intent += `action=android.intent.action.VIEW;`;
+  intent += `category=android.intent.category.BROWSABLE;`;
   intent += `type=application/vnd.apple.mpegurl;`;
   intent += `S.browser_fallback_url=${encodeURIComponent(url)};`;
   intent += `end`;
@@ -608,95 +595,135 @@ function buildAndroidIntent(url){
   return intent;
 }
 
-function openAndroidChooser(url){
-  window.location.href = buildAndroidIntent(url);
+function openAndroidPlayer(channel){
+  window.location.href = buildAndroidIntent(channel.url);
 }
 
 
 /* ==============================
-   Fallback Modal
+   iOS Share Sheet
 ================================= */
-function openFallbackModal(channel, reason=''){
-  if (!channel) return;
+async function openIOSPlayer(channel){
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: channel.name,
+        text: channel.name,
+        url: channel.url
+      });
 
+      setStatus('เปิดเมนูแชร์แล้ว ให้เลือก VLC / Liftplay / Player ที่รองรับ HLS', 'ok');
+    } catch (err) {
+      setStatus('ยกเลิกการแชร์ หรือไม่สามารถส่งลิงก์ไปยังแอปได้', 'bad');
+    }
+  } else {
+    openExternalTab(channel);
+  }
+}
+
+
+/* ==============================
+   Modal
+================================= */
+function openMobileModal(channel, reason=''){
   selectedChannel = channel;
-  stopCurrentStream();
 
   modalLogo.src = channel.logo || '';
   modalLogo.alt = channel.name || '';
-  modalName.textContent = channel.name || 'External Channel';
+  modalName.textContent = channel.name || 'External Player';
 
-  if (isIOS()) {
+  if (isAndroid()) {
+    btnMobilePlayer.innerHTML = `
+      เปิดด้วยแอปบน Android
+      <small id="btnMobilePlayerSmall">ให้ระบบเลือก VLC / Wiseplay / Liftplay หรือแอปที่รองรับ HLS</small>
+    `;
+
     modalNote.textContent =
-      'ระบบลองเล่นบนหน้าเว็บแล้ว แต่ช่องนี้เล่นไม่ได้บน iPhone/iPad ผ่านเว็บโดยตรง ขณะนี้ iOS ไม่สามารถเรียก App Chooser แบบ Android ได้จากหน้าเว็บนี้';
-    btnAndroidChooser.disabled = true;
+      'ระบบลองเล่นบนหน้าเว็บไซต์แล้ว แต่ช่องนี้เล่นไม่ได้ กรุณาเปิดด้วยแอป player บน Android';
+  } else if (isIOS()) {
+    btnMobilePlayer.innerHTML = `
+      แชร์ไปยังแอป Player บน iPhone/iPad
+      <small id="btnMobilePlayerSmall">เลือก VLC / Liftplay หรือแอปที่รองรับ HLS จากเมนูแชร์</small>
+    `;
+
+    modalNote.textContent =
+      'ระบบลองเล่นบนหน้าเว็บไซต์แล้ว แต่ iPhone/iPad ไม่สามารถเรียก App Chooser แบบ Android ได้ ให้ใช้เมนูแชร์ไปยังแอป player';
   } else {
+    btnMobilePlayer.innerHTML = `
+      เปิดด้วยแอป Player
+      <small id="btnMobilePlayerSmall">เลือกแอปที่รองรับ HLS ในเครื่อง</small>
+    `;
+
     modalNote.textContent =
-      'ระบบลองเล่นบนหน้าเว็บแล้ว แต่ stream นี้อาจติด Mixed Content / CORS / app-only behavior กรุณาเลือกวิธีเปิดด้านล่าง';
-    btnAndroidChooser.disabled = false;
+      'ระบบลองเล่นบนหน้าเว็บไซต์แล้ว แต่ช่องนี้เล่นไม่ได้ กรุณาเลือกวิธีเปิดด้านล่าง';
   }
 
-  fallbackModal.classList.add('show');
+  playerModal.classList.add('show');
 
   if (reason) {
-    setStatus(`เล่นบนหน้าเว็บไม่ได้: ${reason}`, 'bad');
+    setStatus(`เล่นบนหน้าเว็บไซต์ไม่ได้: ${reason}`, 'bad');
   } else {
-    setStatus('เล่นบนหน้าเว็บไม่ได้ กรุณาเลือกวิธีเปิดอื่น', 'bad');
+    setStatus('เล่นบนหน้าเว็บไซต์ไม่ได้ กรุณาเลือก player ภายนอก', 'bad');
   }
 }
 
-function closeFallbackModal(){
-  fallbackModal.classList.remove('show');
+function closePlayerModal(){
+  playerModal.classList.remove('show');
 }
 
-closeModal.onclick = closeFallbackModal;
+closeModal.onclick = closePlayerModal;
 
-fallbackModal.addEventListener('click', (e) => {
-  if (e.target === fallbackModal) closeFallbackModal();
+playerModal.addEventListener('click', (e) => {
+  if (e.target === playerModal) closePlayerModal();
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeFallbackModal();
+  if (e.key === 'Escape') closePlayerModal();
 });
 
 
 /* ==============================
-   Fallback Buttons
+   Modal buttons
 ================================= */
-btnAndroidChooser.onclick = () => {
+btnMobilePlayer.onclick = () => {
   if (!selectedChannel) return;
 
-  if (!isAndroid()) {
-    setStatus('ปุ่มนี้ใช้ได้บน Android เท่านั้น เพราะ iPhone/iPad ไม่มี App Chooser แบบ Android จากเว็บทั่วไป', 'bad');
+  if (isAndroid()) {
+    setStatus('กำลังเปิดตัวเลือกแอปบน Android...', 'normal');
+    openAndroidPlayer(selectedChannel);
     return;
   }
 
-  setStatus('กำลังเปิดตัวเลือกแอปบน Android...', 'normal');
-  openAndroidChooser(selectedChannel.url);
+  if (isIOS()) {
+    openIOSPlayer(selectedChannel);
+    return;
+  }
+
+  openExternalTab(selectedChannel);
 };
 
 btnOpenTab.onclick = () => {
   if (!selectedChannel) return;
-
-  const win = window.open(selectedChannel.url, '_blank', 'noopener,noreferrer');
-
-  if (win) {
-    setStatus('เปิดแท็บใหม่แล้ว เหมาะกับ PC ที่มี HLS Player Extension', 'ok');
-  } else {
-    setStatus('เบราว์เซอร์บล็อก popup กรุณาอนุญาต popup แล้วลองอีกครั้ง', 'bad');
-  }
+  openExternalTab(selectedChannel);
 };
 
 
 /* ==============================
-   Main play flow
+   Fallback behavior
 ================================= */
-function showFallbackOnce(channel, token, reason){
+function showFallback(channel, token, reason=''){
   if (token !== playToken) return;
-  if (modalAlreadyShownForToken) return;
+  if (fallbackShown) return;
 
-  modalAlreadyShownForToken = true;
-  openFallbackModal(channel, reason);
+  fallbackShown = true;
+  stopCurrentStream();
+
+  if (isDesktop()) {
+    openExternalTab(channel);
+    return;
+  }
+
+  openMobileModal(channel, reason);
 }
 
 function startFallbackWatch(channel, token){
@@ -706,38 +733,37 @@ function startFallbackWatch(channel, token){
     const isPlaying = !v.paused && !v.ended && v.readyState >= 2;
 
     if (!isPlaying) {
-      showFallbackOnce(channel, token, 'โหลดสัญญาณนานเกินไป');
+      showFallback(channel, token, 'โหลดสัญญาณนานเกินไป');
     }
   }, 9000);
 }
 
+
+/* ==============================
+   Main play flow
+================================= */
 function playChannel(channel){
   selectedChannel = channel;
-  closeFallbackModal();
+  closePlayerModal();
 
   playToken++;
   const token = playToken;
-  modalAlreadyShownForToken = false;
+  fallbackShown = false;
 
   setActive(channel.id);
-  setStatus(`กำลังลองเล่น ${channel.name} บนหน้าเว็บ...`, 'normal');
-
   stopCurrentStream();
+
+  setStatus(`กำลังลองเล่น ${channel.name} บนหน้าเว็บไซต์...`, 'normal');
 
   const url = channel.url;
 
   if (url.startsWith('http://')) {
-    showFallbackOnce(channel, token, 'ลิงก์เป็น HTTP จึงเล่นบนเว็บ HTTPS ไม่ได้');
+    showFallback(channel, token, 'ลิงก์เป็น HTTP จึงเล่นบนเว็บ HTTPS ไม่ได้');
     return;
   }
 
   if (!isHls(url)) {
-    const win = window.open(url, '_blank', 'noopener,noreferrer');
-    if (win) {
-      setStatus('เปิดหน้าเว็บภายนอกแล้ว', 'ok');
-    } else {
-      showFallbackOnce(channel, token, 'ไม่สามารถเปิดหน้าเว็บภายนอกได้');
-    }
+    showFallback(channel, token, 'ลิงก์นี้ไม่ใช่ HLS stream');
     return;
   }
 
@@ -753,7 +779,7 @@ function playChannel(channel){
     };
 
     v.onerror = () => {
-      showFallbackOnce(channel, token, 'HTML5 video error');
+      showFallback(channel, token, 'HTML5 video error');
     };
 
     v.play()
@@ -762,7 +788,7 @@ function playChannel(channel){
         setStatus(`กำลังเล่น ${channel.name}`, 'ok');
       })
       .catch(err => {
-        showFallbackOnce(channel, token, err.message || 'play error');
+        showFallback(channel, token, err.message || 'play error');
       });
 
     return;
@@ -791,7 +817,7 @@ function playChannel(channel){
           setStatus(`กำลังเล่น ${channel.name}`, 'ok');
         })
         .catch(err => {
-          showFallbackOnce(channel, token, err.message || 'autoplay error');
+          showFallback(channel, token, err.message || 'autoplay error');
         });
     });
 
@@ -808,10 +834,11 @@ function playChannel(channel){
         details.includes('manifestLoadError') ||
         details.includes('levelLoadError') ||
         details.includes('fragLoadError') ||
-        details.includes('bufferStalledError');
+        details.includes('bufferStalledError') ||
+        details.includes('internalException');
 
       if (shouldFallback) {
-        showFallbackOnce(channel, token, `${type} / ${details}`);
+        showFallback(channel, token, `${type} / ${details}`);
       } else {
         setStatus(`HLS warning: ${type} / ${details}`, 'normal');
       }
@@ -826,7 +853,7 @@ function playChannel(channel){
     return;
   }
 
-  showFallbackOnce(channel, token, 'เบราว์เซอร์นี้ไม่รองรับ HLS');
+  showFallback(channel, token, 'เบราว์เซอร์นี้ไม่รองรับ HLS');
 }
 
 
@@ -839,13 +866,10 @@ function renderGrid(){
   sports.forEach(c => {
     const d = document.createElement('div');
 
-    d.className = c.fallback ? 'ch external' : 'ch';
+    d.className = 'ch';
     d.dataset.id = c.id;
 
-    const badge = c.fallback ? '<div class="badge">AUTO</div>' : '';
-
     d.innerHTML = `
-      ${badge}
       <img src="${escapeHtml(c.logo)}" alt="${escapeHtml(c.name)}">
       <div class="name">${escapeHtml(c.name)}</div>
     `;
@@ -857,13 +881,6 @@ function renderGrid(){
 }
 
 renderGrid();
-
-/* Auto play first normal channel */
-const firstPlayable = sports.find(c => !c.fallback);
-
-if (firstPlayable) {
-  playChannel(firstPlayable);
-}
 </script>
 </body>
 </html>
