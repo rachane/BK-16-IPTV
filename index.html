@@ -1,50 +1,180 @@
- <!doctype html>
+<!doctype html>
 <html lang="th">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>IPTV by BK-16</title>
+
 <style>
   :root{
     --bg1:#0b1220; --bg2:#08101d;
     --panel:#0f172a; --border:#334155; --muted:#9fb2c7;
     --brand1:#17c1d6; --brand2:#31d17b;
+    --bad:#fca5a5; --warn:#facc15;
   }
+
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#fff}
 
-  /* Header */
-  header{position:sticky;top:0;z-index:10;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.06)}
-  .bar{max-width:1200px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;justify-content:center;gap:16px}
-  .brand{display:flex;align-items:center;gap:14px}
-  .brand img{width:64px;height:64px;object-fit:contain;border-radius:10px;display:block}
-  .title{font-weight:900;letter-spacing:.3px;font-size:clamp(22px,4vw,34px);background:linear-gradient(90deg,var(--brand1),var(--brand2));-webkit-background-clip:text;background-clip:text;color:transparent}
-
-  main{max-width:1200px;margin:16px auto;padding:0 12px}
-
-  /* Player */
-  .player{width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
-  video{width:100%;height:100%;background:#000;outline:none}
-
-  /* Grid ช่องกีฬา */
-  .section-title{
-    text-align:center;margin:20px 0 10px;font-weight:900;
-    font-size:clamp(18px,2.4vw,22px);letter-spacing:.3px;
+  body{
+    margin:0;
+    font-family:Inter,system-ui,Arial,sans-serif;
+    background:linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:#fff;
   }
-  .section-title .accent{
+
+  header{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+
+  .bar{
+    max-width:1200px;
+    margin:0 auto;
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+
+  .brand img{
+    width:64px;
+    height:64px;
+    object-fit:contain;
+    border-radius:10px;
+    display:block;
+  }
+
+  .title{
+    font-weight:900;
+    letter-spacing:.3px;
+    font-size:clamp(22px,4vw,34px);
     background:linear-gradient(90deg,var(--brand1),var(--brand2));
-    -webkit-background-clip:text;background-clip:text;color:transparent;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
   }
-  .grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;justify-content:center}
-  .ch{width:150px;background:var(--panel);border:1px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;padding:8px;transition:transform .15s ease, background .15s ease}
-  .ch:hover{transform:translateY(-1px);background:#0b1220}
-  .ch.active{outline:2px solid var(--brand1);box-shadow:0 0 0 3px rgba(23,193,214,.25) inset}
-  .ch img{width:100%;height:84px;object-fit:contain;display:block;margin:0 auto 6px}
-  .name{font-size:13px;color:#dbeafe}
-  .hint{margin:10px 0 0;text-align:center;font-size:13px;color:var(--muted)}
+
+  main{
+    max-width:1200px;
+    margin:16px auto;
+    padding:0 12px;
+  }
+
+  .player{
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.12);
+  }
+
+  video{
+    width:100%;
+    height:100%;
+    background:#000;
+    outline:none;
+  }
+
+  .grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:12px;
+    justify-content:center;
+  }
+
+  .ch{
+    position:relative;
+    width:150px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    cursor:pointer;
+    text-align:center;
+    padding:8px;
+    transition:transform .15s ease, background .15s ease;
+  }
+
+  .ch:hover{
+    transform:translateY(-1px);
+    background:#0b1220;
+  }
+
+  .ch.active{
+    outline:2px solid var(--brand1);
+    box-shadow:0 0 0 3px rgba(23,193,214,.25) inset;
+  }
+
+  .ch.external{
+    border-color:rgba(250,204,21,.55);
+  }
+
+  .ch img{
+    width:100%;
+    height:84px;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 6px;
+  }
+
+  .name{
+    font-size:13px;
+    color:#dbeafe;
+    min-height:34px;
+  }
+
+  .badge{
+    position:absolute;
+    top:6px;
+    right:6px;
+    padding:2px 6px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800;
+    color:#111827;
+    background:var(--warn);
+  }
+
+  .hint{
+    margin:10px 0 0;
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  #status{
+    min-height:22px;
+    margin-top:8px;
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  #status.bad{
+    color:var(--bad);
+  }
+
+  #status a{
+    color:#67e8f9;
+    text-decoration:underline;
+  }
 </style>
+
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
+
 <body>
 <header>
   <div class="bar">
@@ -56,124 +186,324 @@
 </header>
 
 <main>
-  <div class="player"><video id="v" controls playsinline muted></video></div>
+  <div class="player">
+    <video id="v" controls playsinline muted></video>
+  </div>
 
-  
+  <div id="status"></div>
+
   <div id="grid-sports" class="grid"></div>
 
-  <p class="hint">* คลิกโลโก้ช่องเพื่อเล่นทันที • ถ้าไม่ใช่สัญญาณ .m3u8 จะเปิดในแท็บใหม่ UD-2025-11-02</p>
+  <p class="hint">
+    * คลิกโลโก้ช่องเพื่อเล่นทันที • ช่องที่ขึ้น External จะเปิดในแท็บใหม่สำหรับ HLS Player / VLC / Wiseplay
+  </p>
 </main>
 
 <script>
 /* ====== รายการช่องกีฬา ====== */
 const sports = [
   /* Monomax World Cup */
-  { id:"FIFA World Cup 2026", name:"FIFA World Cup MonoMax1", logo:"https://img2.pic.in.th/WorldCup.png",
-    url:"https://yyi7tewa2x.3ppnkog.com/xstream/monomax-2/playlist.m3u8"},
-  { id:"FIFA World Cup 2026", name:"FIFA World Cup MonoMax2", logo:"https://img2.pic.in.th/WorldCup.png",
-    url:"https://yyi7tewa2x.3ppnkog.com/xstream/monomax-3/playlist.m3u8"},
-  { id:"FIFA World Cup 2026", name:"FIFA World Cup MonoMax3", logo:"https://img2.pic.in.th/WorldCup.png",
-    url:"https://yyi7tewa2x.3ppnkog.com/xstream/monomax-1/playlist.m3u8"},
-  { id:"FIFA World Cup 2026", name:"FIFA+", logo:"https://img2.pic.in.th/Fifa.png",
-    url:"https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8"},
+  {
+    id:"wc-monomax1",
+    name:"FIFA World Cup MonoMax1",
+    logo:"https://img2.pic.in.th/WorldCup.png",
+    url:"https://yyi7tewa2x.3ppnkog.com/xstream/monomax-2/playlist.m3u8"
+  },
+  {
+    id:"wc-monomax2",
+    name:"FIFA World Cup MonoMax2",
+    logo:"https://img2.pic.in.th/WorldCup.png",
+    url:"https://yyi7tewa2x.3ppnkog.com/xstream/monomax-3/playlist.m3u8"
+  },
+  {
+    id:"wc-monomax3",
+    name:"FIFA World Cup MonoMax3",
+    logo:"https://img2.pic.in.th/WorldCup.png",
+    url:"https://yyi7tewa2x.3ppnkog.com/xstream/monomax-1/playlist.m3u8"
+  },
+  {
+    id:"fifa-plus",
+    name:"FIFA+",
+    logo:"https://img2.pic.in.th/Fifa.png",
+    url:"https://a62dad94.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0ZJRkFQbHVzRW5nbGlzaF9ITFM/playlist.m3u8"
+  },
 
-/* Monomax */
-  /* ====== { id:"monomax01", name:"Monomax Sport 01", logo:"https://img1.pic.in.th/images/011c7ba4fae8fe556a4.png",
-    url:"https://blive99.github.io/m3u8/sporttv/monomax1.m3u8"}, ====== */
-
-{
-  id:"monomax01",
-  name:"TMonomax",
-  logo:"https://img1.pic.in.th/images/011c7ba4fae8fe556a4.png",
-  url:"https://blive99.github.io/m3u8/sporttv/monomax1.m3u8",
-  external:true
-}
-	
-  { id:"monomax02", name:"Monomax Sport 02", logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
-    url:"https://blive99.github.io/m3u8/sporttv/monomax2.m3u8"},
-  { id:"monomax03", name:"Monomax Sport 03", logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
-    url:"https://blive99.github.io/m3u8/sporttv/monomax3.m3u8"},
-  
+  /* Monomax: เปิดแบบ External เพราะติด Mixed Content ในเว็บ HTTPS */
+  {
+    id:"monomax01",
+    name:"Monomax Sport 01",
+    logo:"https://img1.pic.in.th/images/011c7ba4fae8fe556a4.png",
+    url:"https://blive99.github.io/m3u8/sporttv/monomax1.m3u8",
+    externalOnly:true
+  },
+  {
+    id:"monomax02",
+    name:"Monomax Sport 02",
+    logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
+    url:"https://blive99.github.io/m3u8/sporttv/monomax2.m3u8",
+    externalOnly:true
+  },
+  {
+    id:"monomax03",
+    name:"Monomax Sport 03",
+    logo:"https://img2.pic.in.th/maxc2d18f180c225ce1.png",
+    url:"https://blive99.github.io/m3u8/sporttv/monomax3.m3u8",
+    externalOnly:true
+  },
 
   /* อื่น ๆ */
-  { id:"redbulltv", name:"Red Bull TV", logo:"https://img2.sport-tv-guide.live/images/tv-station-red-bull-tv-2760.png",
-    url:"https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8"},
-  { id:"spotv1", name:"SPOTV 1", logo:"https://ball67.com/assets/channels-logo/spotv1.png",
-    url:"https://blive99.github.io/m3u8/sporttv/truespotv2.m3u8"},
-  { id:"spotv2", name:"SPOTV 2", logo:"https://ball67.com/assets/channels-logo/spotv2.png",
-    url:"https://blive99.github.io/m3u8/sporttv/truespotv.m3u8"},
-  { id:"bein1", name:"beIN SPORT TH 1", logo:"https://ball67.com/assets/channels-logo/bein1.png",
-    url:"https://54.37.19.157/bein1/tracks-v1a1/mono.m3u8"},
-  { id:"bein2", name:"AIS beIN SPORT 2", logo:"https://ball67.com/assets/channels-logo/bein2.png",
-    url:"https://54.37.19.157/bein2/tracks-v1a1/mono.m3u8"},
-  { id:"bein3", name:"beIN SPORT TH 3", logo:"https://ball67.com/assets/channels-logo/bein3.png",
-    url:"https://54.37.19.157/bein3/tracks-v1a1/mono.m3u8"},
+  {
+    id:"redbulltv",
+    name:"Red Bull TV",
+    logo:"https://img2.sport-tv-guide.live/images/tv-station-red-bull-tv-2760.png",
+    url:"https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master_3360.m3u8"
+  },
+  {
+    id:"spotv1",
+    name:"SPOTV 1",
+    logo:"https://ball67.com/assets/channels-logo/spotv1.png",
+    url:"https://blive99.github.io/m3u8/sporttv/truespotv2.m3u8"
+  },
+  {
+    id:"spotv2",
+    name:"SPOTV 2",
+    logo:"https://ball67.com/assets/channels-logo/spotv2.png",
+    url:"https://blive99.github.io/m3u8/sporttv/truespotv.m3u8"
+  },
+  {
+    id:"bein1",
+    name:"beIN SPORT TH 1",
+    logo:"https://ball67.com/assets/channels-logo/bein1.png",
+    url:"http://54.37.19.157/bein1/tracks-v1a1/mono.m3u8",
+    externalOnly:true
+  },
+  {
+    id:"bein2",
+    name:"AIS beIN SPORT 2",
+    logo:"https://ball67.com/assets/channels-logo/bein2.png",
+    url:"http://54.37.19.157/bein2/tracks-v1a1/mono.m3u8",
+    externalOnly:true
+  },
+  {
+    id:"bein3",
+    name:"beIN SPORT TH 3",
+    logo:"https://ball67.com/assets/channels-logo/bein3.png",
+    url:"http://54.37.19.157/bein3/tracks-v1a1/mono.m3u8",
+    externalOnly:true
+  },
 
-{ id:"True Sport", name:"True Sport 1", logo:"https://img2.pic.in.th/true1.png",
-url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"},
- { id:"True Sport", name:"True Sport 2", logo:"https://img1.pic.in.th/images/true2.png",
-url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"},
- { id:"True Sport", name:"True Sport 3", logo:"https://img1.pic.in.th/images/true3.png",
-url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"},
+  {
+    id:"truesport1",
+    name:"True Sport 1",
+    logo:"https://img2.pic.in.th/true1.png",
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
+  },
+  {
+    id:"truesport2",
+    name:"True Sport 2",
+    logo:"https://img1.pic.in.th/images/true2.png",
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
+  },
+  {
+    id:"truesport3",
+    name:"True Sport 3",
+    logo:"https://img1.pic.in.th/images/true3.png",
+    url:"https://www.livedoomovies.com:4431/02_sport1_720p/playlist.m3u8"
+  },
 
-	
-  { id:"lfctv", name:"LFC TV (เปิดหน้าเว็บ)", logo:"https://img2.sport-tv-guide.live/images/tv-station-lfc-tv-112.png",
-    url:"https://dooballplus2.live/channels/lfctv/"} /* not m3u8 -> open new tab */
+  {
+    id:"lfctv",
+    name:"LFC TV",
+    logo:"https://img2.sport-tv-guide.live/images/tv-station-lfc-tv-112.png",
+    url:"https://dooballplus2.live/channels/lfctv/",
+    externalOnly:true
+  }
 ];
+
 
 /* ====== Player logic ====== */
 const v = document.getElementById('v');
 const gridSports = document.getElementById('grid-sports');
+const statusBox = document.getElementById('status');
+
 let _hls = null;
 let currentId = null;
 
 const isHls = (u) => /\.m3u8($|\?)/i.test(u);
 
-function playUrl(url){
-  if (!isHls(url)) { window.open(url, '_blank'); return; } // เปิดเว็บแทน
-  if (v.canPlayType('application/vnd.apple.mpegurl')) {
-    v.src = url;
-    v.play().catch(()=>{});
-  } else if (window.Hls && Hls.isSupported()) {
-    if (_hls) _hls.destroy();
-    _hls = new Hls();
-    _hls.loadSource(url);
-    _hls.attachMedia(v);
-    _hls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(()=>{}));
-  } else {
-    alert('เบราว์เซอร์นี้ไม่รองรับ HLS');
+function escapeHtml(text){
+  return String(text)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+}
+
+function setStatus(msg, bad=false){
+  statusBox.textContent = msg;
+  statusBox.classList.toggle('bad', bad);
+}
+
+function setStatusHtml(html, bad=false){
+  statusBox.innerHTML = html;
+  statusBox.classList.toggle('bad', bad);
+}
+
+function stopCurrentStream(){
+  if (_hls) {
+    _hls.destroy();
+    _hls = null;
   }
+
+  v.pause();
+  v.removeAttribute('src');
+  v.load();
 }
 
 function setActive(id){
-  [...document.querySelectorAll('.ch')].forEach(el => el.classList.toggle('active', el.dataset.id===id));
+  document.querySelectorAll('.ch').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
   currentId = id;
+}
+
+function openExternalChannel(channel){
+  stopCurrentStream();
+
+  const newWindow = window.open(channel.url, '_blank', 'noopener,noreferrer');
+
+  const safeName = escapeHtml(channel.name);
+  const safeUrl = escapeHtml(channel.url);
+
+  if (newWindow) {
+    setStatusHtml(
+      `เปิด <b>${safeName}</b> ในแท็บใหม่แล้ว หากไม่เล่นอัตโนมัติ ให้ใช้ HLS Player Extension / VLC / Wiseplay`,
+      false
+    );
+  } else {
+    setStatusHtml(
+      `เบราว์เซอร์บล็อก popup ของ <b>${safeName}</b> — <a href="${safeUrl}" target="_blank" rel="noopener noreferrer">คลิกเปิดช่องนี้อีกครั้ง</a>`,
+      true
+    );
+  }
+}
+
+function playUrl(url){
+  setStatus('กำลังโหลดสัญญาณ...');
+
+  if (url.startsWith('http://')) {
+    stopCurrentStream();
+    setStatus('ช่องนี้เป็น HTTP จึงเล่นบนเว็บ HTTPS ไม่ได้ กำลังเปิดในแท็บใหม่แทน', true);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    return;
+  }
+
+  if (!isHls(url)) {
+    stopCurrentStream();
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setStatus('เปิดหน้าเว็บภายนอกแล้ว');
+    return;
+  }
+
+  if (_hls) {
+    _hls.destroy();
+    _hls = null;
+  }
+
+  v.removeAttribute('src');
+  v.load();
+
+  if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    v.src = url;
+    v.play()
+      .then(() => setStatus('กำลังเล่น'))
+      .catch(err => setStatus('เล่นไม่ได้: ' + err.message, true));
+    return;
+  }
+
+  if (window.Hls && Hls.isSupported()) {
+    _hls = new Hls({
+      debug:false,
+      enableWorker:true,
+      lowLatencyMode:true,
+      maxBufferLength:30
+    });
+
+    _hls.loadSource(url);
+    _hls.attachMedia(v);
+
+    _hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      setStatus('โหลดสัญญาณสำเร็จ กำลังเล่น...');
+      v.play()
+        .then(() => setStatus('กำลังเล่น'))
+        .catch(err => setStatus('Autoplay error: ' + err.message, true));
+    });
+
+    _hls.on(Hls.Events.ERROR, (event, data) => {
+      console.warn('HLS ERROR:', data);
+
+      const msg = `HLS Error: ${data.type} / ${data.details}${data.fatal ? ' / fatal' : ''}`;
+      setStatus(msg, data.fatal);
+
+      if (data.fatal) {
+        if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+          _hls.recoverMediaError();
+        } else {
+          _hls.destroy();
+          _hls = null;
+        }
+      }
+    });
+
+    return;
+  }
+
+  setStatus('เบราว์เซอร์นี้ไม่รองรับ HLS', true);
+  alert('เบราว์เซอร์นี้ไม่รองรับ HLS');
 }
 
 function renderGrid(){
   gridSports.innerHTML = '';
-  sports.forEach(c=>{
+
+  sports.forEach(c => {
     const d = document.createElement('div');
-    d.className='ch';
+
+    d.className = c.externalOnly ? 'ch external' : 'ch';
     d.dataset.id = c.id;
-    d.innerHTML = `<img src="${c.logo}" alt="${c.name}"><div class="name">${c.name}</div>`;
-    d.onclick = () => { setActive(c.id); playUrl(c.url); };
+
+    const badge = c.externalOnly ? '<div class="badge">EXT</div>' : '';
+
+    d.innerHTML = `
+      ${badge}
+      <img src="${c.logo}" alt="${escapeHtml(c.name)}">
+      <div class="name">${escapeHtml(c.name)}</div>
+    `;
+
+    d.onclick = () => {
+      setActive(c.id);
+
+      if (c.externalOnly) {
+        openExternalChannel(c);
+        return;
+      }
+
+      playUrl(c.url);
+    };
+
     gridSports.appendChild(d);
   });
 }
 
 renderGrid();
-/* เล่นช่องแรกอัตโนมัติ */
-if (sports[0]) { setActive(sports[0].id); playUrl(sports[0].url); }
+
+/* เล่นช่องแรกที่ไม่ใช่ External อัตโนมัติ */
+const firstPlayable = sports.find(c => !c.externalOnly);
+
+if (firstPlayable) {
+  setActive(firstPlayable.id);
+  playUrl(firstPlayable.url);
+}
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
