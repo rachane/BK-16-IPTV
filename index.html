@@ -179,7 +179,6 @@
 
   .player-card,
   .side-card,
-  .toolbar,
   .channel-card,
   .modal{
     background:linear-gradient(180deg, rgba(255,255,255,.095), rgba(255,255,255,.045));
@@ -371,55 +370,6 @@
     background:linear-gradient(90deg,rgba(24,199,221,.22),rgba(52,211,153,.16));
   }
 
-  .toolbar{
-    margin-top:18px;
-    border-radius:var(--radius-lg);
-    padding:14px;
-    display:grid;
-    grid-template-columns:1fr auto;
-    gap:12px;
-    align-items:center;
-  }
-
-  .search-wrap{
-    position:relative;
-  }
-
-  .search-wrap::before{
-    content:"⌕";
-    position:absolute;
-    left:15px;
-    top:50%;
-    transform:translateY(-50%);
-    color:var(--muted);
-    font-size:20px;
-    line-height:1;
-  }
-
-  #searchInput{
-    width:100%;
-    height:48px;
-    border:1px solid rgba(255,255,255,.13);
-    border-radius:999px;
-    padding:0 18px 0 44px;
-    color:#fff;
-    background:rgba(0,0,0,.2);
-    outline:none;
-  }
-
-  #searchInput:focus{
-    border-color:rgba(24,199,221,.6);
-    box-shadow:0 0 0 4px rgba(24,199,221,.12);
-  }
-
-  #searchInput::placeholder{color:#7f8fa4}
-
-  .count{
-    color:var(--muted);
-    font-size:13px;
-    white-space:nowrap;
-  }
-
   .channel-grid{
     margin-top:16px;
     display:grid;
@@ -495,7 +445,7 @@
   .channel-name{
     min-height:42px;
     color:#edf6ff;
-    font-weight:900;
+    font-weight:400;
     font-size:14px;
     line-height:1.35;
   }
@@ -706,14 +656,6 @@
     .now-mini strong{max-width:62vw;font-size:13px}
     .live-badge{font-size:11px;padding:6px 8px}
 
-    .toolbar{grid-template-columns:1fr}
-    .count{text-align:center}
-
-    .channel-grid{
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:11px;
-    }
-
     .channel-card{
       min-height:170px;
       padding:10px;
@@ -737,6 +679,638 @@
   @media (min-width:520px){
     .btn-grid{grid-template-columns:1fr 1fr}
   }
+
+
+  /* ===== BK-16 UI polish v2 =====
+     ซ่อนปุ่มระบบหลังบ้าน, ลบแถบค้นหา, และปรับการ์ดช่องให้โลโก้ชัดขึ้น
+  */
+  .side-card{
+    justify-content:flex-start;
+    min-height:100%;
+  }
+
+  .side-actions{
+    display:none !important;
+  }
+
+  .channel-grid{
+    margin-top:20px;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+    gap:14px;
+  }
+
+  .channel-card{
+    min-height:178px;
+    padding:14px 12px 13px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    justify-content:flex-start;
+  }
+
+  .channel-card:hover .logo-box{
+    transform:translateY(-1px) scale(1.025);
+    box-shadow:0 16px 34px rgba(0,0,0,.28);
+  }
+
+  .logo-box{
+    width:88px;
+    height:88px;
+    margin:0 auto;
+    border-radius:16px;
+    background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.88));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7), 0 12px 28px rgba(0,0,0,.22);
+    transition:transform .16s ease, box-shadow .16s ease;
+  }
+
+  .logo-box img{
+    width:80px;
+    height:80px;
+    padding:5px;
+    object-fit:contain;
+  }
+
+  .channel-meta{
+    width:100%;
+    display:block;
+    margin-top:12px;
+    text-align:center;
+  }
+
+  .channel-name{
+    min-height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:14px;
+    line-height:1.28;
+  }
+
+  .channel-tag{
+    justify-content:center;
+    margin-top:8px;
+    max-width:100%;
+  }
+
+  .play-dot{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:30px;
+    height:30px;
+    font-size:13px;
+    box-shadow:0 8px 18px rgba(0,0,0,.25);
+  }
+
+  @media (max-width:680px){
+    .channel-grid{
+      margin-top:16px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:11px;
+    }
+
+    .channel-card{
+      min-height:162px;
+      padding:11px 9px;
+    }
+
+    .logo-box{
+      width:76px;
+      height:76px;
+      border-radius:14px;
+    }
+
+    .logo-box img{
+      width:70px;
+      height:70px;
+      padding:4px;
+    }
+
+    .channel-name{
+      min-height:36px;
+      font-size:13px;
+    }
+
+    .channel-tag{
+      font-size:10px;
+      padding:4px 8px;
+    }
+
+    .play-dot{
+      top:10px;
+      right:10px;
+      width:28px;
+      height:28px;
+    }
+  }
+
+
+
+  /* ===== BK-16 UI polish v3 (base) =====
+     Default UI font, two header tabs,
+     no card play icons, and lightweight channel labels.
+  */
+
+  /* Use the original UI/system font stack for both English and Thai. */
+  body,
+  button,
+  input,
+  textarea,
+  select{
+    font-family:Inter,system-ui,-apple-system,
+      BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+  }
+
+  /* Avoid synthetic heavy styling on the small category labels. */
+  .channel-tag{
+    font-weight:400 !important;
+    letter-spacing:.015em;
+  }
+
+  /* Play icon removed from markup; this is a safety fallback. */
+  .play-dot{
+    display:none !important;
+  }
+
+  .channel-meta{
+    justify-content:center;
+  }
+
+  .channel-meta > div{
+    width:100%;
+  }
+
+  /* ===== Header navigation tabs ===== */
+  .nav-tabs{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+  }
+
+  .nav-tab{
+    min-height:42px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:0 17px;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:999px;
+    color:#e8f2ff;
+    background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.035));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+    cursor:pointer;
+    font-weight:400;
+    white-space:nowrap;
+    transition:
+      transform .15s ease,
+      border-color .15s ease,
+      background .15s ease,
+      box-shadow .15s ease;
+  }
+
+  .nav-tab:hover{
+    transform:translateY(-1px);
+    border-color:rgba(24,199,221,.48);
+    background:rgba(24,199,221,.09);
+  }
+
+  .nav-tab.active{
+    color:#effdff;
+    border-color:rgba(24,199,221,.9);
+    background:linear-gradient(90deg,rgba(24,199,221,.20),rgba(52,211,153,.11));
+    box-shadow:
+      0 0 0 3px rgba(24,199,221,.10),
+      inset 0 1px 0 rgba(255,255,255,.12);
+  }
+
+  .nav-tab-icon{
+    display:inline-grid;
+    place-items:center;
+    width:19px;
+    height:19px;
+    font-family:system-ui,"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+    font-size:13px;
+    line-height:1;
+  }
+
+  /* ===== Switchable content panels ===== */
+  .tab-panel{
+    animation:panelFade .20s ease;
+  }
+
+  .tab-panel[hidden]{
+    display:none !important;
+  }
+
+  @keyframes panelFade{
+    from{opacity:0;transform:translateY(5px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  /* ===== Broadcast schedule panel ===== */
+  .schedule-card{
+    margin-top:20px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:var(--radius-xl);
+    background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.04));
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(16px);
+  }
+
+  .schedule-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    padding-bottom:16px;
+    border-bottom:1px solid rgba(255,255,255,.09);
+  }
+
+  .schedule-kicker{
+    margin:0 0 3px;
+    color:var(--brand);
+    font-size:12px;
+    font-weight:400;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  .schedule-head h2{
+    margin:0;
+    font-size:clamp(24px,3vw,34px);
+    font-weight:400;
+  }
+
+  .schedule-live-pill{
+    display:inline-flex;
+    align-items:center;
+    min-height:31px;
+    padding:0 11px;
+    border:1px solid rgba(52,211,153,.30);
+    border-radius:999px;
+    color:#9df4c8;
+    background:rgba(52,211,153,.09);
+    font-size:11px;
+    font-weight:400;
+    letter-spacing:.06em;
+  }
+
+  .schedule-list{
+    margin-top:14px;
+    display:grid;
+    gap:10px;
+  }
+
+  .schedule-row{
+    display:grid;
+    grid-template-columns:82px 1fr;
+    gap:14px;
+    align-items:center;
+    padding:13px 14px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:16px;
+    background:rgba(0,0,0,.14);
+  }
+
+  .schedule-row time{
+    color:#a8f6ff;
+    font-size:20px;
+  }
+
+  .schedule-event strong,
+  .schedule-event span{
+    display:block;
+  }
+
+  .schedule-event strong{
+    font-weight:400;
+    font-size:17px;
+  }
+
+  .schedule-event span{
+    margin-top:3px;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .schedule-empty{
+    min-height:210px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:28px 18px;
+    text-align:center;
+    color:var(--muted);
+    border:1px dashed rgba(255,255,255,.18);
+    border-radius:18px;
+    background:rgba(0,0,0,.12);
+  }
+
+  .schedule-empty-icon{
+    margin-bottom:10px;
+    font-family:system-ui,"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+    font-size:34px;
+  }
+
+  .schedule-empty strong{
+    color:#edf6ff;
+    font-weight:400;
+    font-size:18px;
+  }
+
+  .schedule-empty span{
+    margin-top:7px;
+    max-width:540px;
+    font-size:13px;
+    line-height:1.55;
+  }
+
+  .schedule-empty code{
+    padding:2px 5px;
+    border-radius:6px;
+    color:#bff8ff;
+    background:rgba(24,199,221,.10);
+    font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+    font-size:.92em;
+  }
+
+  @media (max-width:680px){
+    .top-actions{
+      display:flex !important;
+      width:100%;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .nav-tab{
+      flex:1 1 0;
+      max-width:190px;
+      min-height:40px;
+      padding:0 11px;
+      font-size:13px;
+    }
+
+    .schedule-card{
+      margin-top:16px;
+      padding:14px;
+      border-radius:20px;
+    }
+
+    .schedule-head{
+      align-items:center;
+    }
+
+    .schedule-live-pill{
+      display:none;
+    }
+
+    .schedule-row{
+      grid-template-columns:64px 1fr;
+      gap:10px;
+      padding:11px;
+    }
+
+    .schedule-row time{
+      font-size:17px;
+    }
+  }
+
+
+  /* ===== BK-16 UI polish v4 =====
+     Original UI/system font stack with automatic scrolling to the player.
+  */
+  body,
+  button,
+  input,
+  textarea,
+  select{
+    font-family:Inter,system-ui,-apple-system,
+      BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+  }
+
+
+  /* Keep the video area visible below the sticky header after auto-scroll. */
+  .hero{
+    scroll-margin-top:104px;
+  }
+
+  @media (max-width:680px){
+    .hero{
+      scroll-margin-top:150px;
+    }
+  }
+
+
+  /* Channel names under logos: regular weight */
+  .channel-card .channel-name{
+    font-weight:400 !important;
+  }
+
+
+  /* ===== BK-16 UI polish v7 =====
+     Larger video area, compact Now Playing card,
+     smaller in-player channel overlay, and no category pill under channel logos.
+  */
+
+  /* Give the video more horizontal space on wide screens. */
+  .app-shell,
+  .topbar-inner{
+    width:min(1380px, calc(100% - 28px));
+  }
+
+  .hero{
+    grid-template-columns:minmax(0, 1fr) 275px;
+    gap:14px;
+    align-items:start;
+  }
+
+  /* Compact Now Playing card on the right. */
+  .side-card{
+    min-height:0;
+    padding:14px;
+    gap:10px;
+    justify-content:flex-start;
+  }
+
+  .section-label{
+    margin-bottom:9px;
+    font-size:10px;
+    letter-spacing:.11em;
+  }
+
+  .featured-logo{
+    width:68px;
+    height:68px;
+    padding:7px;
+    border-radius:18px;
+  }
+
+  .featured-title{
+    margin:12px 0 6px;
+    font-size:clamp(19px,2vw,24px);
+    line-height:1.08;
+  }
+
+  #status{
+    min-height:0;
+    font-size:12px;
+    line-height:1.4;
+  }
+
+  /* Make the title/logo overlay inside the video less intrusive. */
+  .player-top{
+    min-height:48px;
+    padding:8px 10px;
+    gap:8px;
+  }
+
+  .now-mini{
+    gap:7px;
+  }
+
+  .now-mini img{
+    width:32px;
+    height:32px;
+    padding:4px;
+    border-radius:10px;
+  }
+
+  .now-mini strong{
+    max-width:42vw;
+    font-size:12.5px;
+    font-weight:600;
+    line-height:1.15;
+  }
+
+  .now-mini span{
+    margin-top:1px;
+    font-size:9.5px;
+    line-height:1.15;
+  }
+
+  .live-badge{
+    gap:5px;
+    padding:5px 8px;
+    font-size:10px;
+  }
+
+  .live-badge::before{
+    width:6px;
+    height:6px;
+  }
+
+  /* Channel cards no longer need extra vertical room for a category pill. */
+  .channel-card{
+    min-height:152px;
+    padding:13px 11px 12px;
+  }
+
+  .channel-meta{
+    margin-top:11px;
+  }
+
+  .channel-name{
+    min-height:34px;
+  }
+
+  .channel-tag{
+    display:none !important;
+  }
+
+  @media (max-width:1100px){
+    .hero{
+      grid-template-columns:minmax(0, 1fr) 250px;
+    }
+  }
+
+  @media (max-width:980px){
+    .hero{
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+
+    .side-card{
+      width:100%;
+    }
+
+    .side-content{
+      display:grid;
+      grid-template-columns:64px minmax(0,1fr);
+      grid-template-areas:
+        "label label"
+        "logo title"
+        "logo status";
+      column-gap:12px;
+      align-items:center;
+    }
+
+    .side-content .section-label{
+      grid-area:label;
+    }
+
+    .side-content .featured-logo{
+      grid-area:logo;
+      width:64px;
+      height:64px;
+    }
+
+    .side-content .featured-title{
+      grid-area:title;
+      margin:0 0 3px;
+    }
+
+    .side-content #status{
+      grid-area:status;
+    }
+  }
+
+  @media (max-width:680px){
+    .app-shell,
+    .topbar-inner{
+      width:min(100% - 20px, 1380px);
+    }
+
+    .player-top{
+      min-height:44px;
+      padding:7px 8px;
+    }
+
+    .now-mini img{
+      width:29px;
+      height:29px;
+      border-radius:9px;
+    }
+
+    .now-mini strong{
+      max-width:58vw;
+      font-size:11.5px;
+    }
+
+    .now-mini span{
+      font-size:9px;
+    }
+
+    .live-badge{
+      padding:4px 7px;
+      font-size:9px;
+    }
+
+    .channel-card{
+      min-height:142px;
+      padding:11px 9px 10px;
+    }
+
+    .channel-name{
+      min-height:32px;
+    }
+  }
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -753,9 +1327,33 @@
       </div>
     </div>
 
-    <div class="top-actions">
-      <div class="chip">Sports • HLS • Mobile ready</div>
-    </div>
+    <nav class="top-actions nav-tabs" role="tablist" aria-label="เมนูหลัก">
+      <button
+        class="nav-tab active"
+        id="tabChannels"
+        type="button"
+        role="tab"
+        aria-selected="true"
+        aria-controls="channelsPanel"
+        data-tab="channels"
+      >
+        <span class="nav-tab-icon" aria-hidden="true">📺</span>
+        <span>ช่องทีวี</span>
+      </button>
+
+      <button
+        class="nav-tab"
+        id="tabSchedule"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="schedulePanel"
+        data-tab="schedule"
+      >
+        <span class="nav-tab-icon" aria-hidden="true">⚽</span>
+        <span>ตารางการถ่ายทอด</span>
+      </button>
+    </nav>
   </div>
 </header>
 
@@ -766,7 +1364,7 @@
         <div class="now-mini">
           <img id="nowLogoMini" src="" alt="">
           <div>
-            <strong id="nowNameMini">กำลังโหลดช่องแรก...</strong>
+            <strong id="nowNameMini">กำลังเตรียมสัญญาณ...</strong>
             <span id="nowGroupMini">BK-16 Player</span>
           </div>
         </div>
@@ -783,31 +1381,46 @@
         <p class="section-label">Now Playing</p>
         <img id="featuredLogo" class="featured-logo" src="" alt="">
         <h1 id="featuredName" class="featured-title">IPTV by BK-16</h1>
-        <p id="status">กำลังโหลดช่องแรก...</p>
-      </div>
-
-      <div class="side-actions">
-        <button class="btn primary" id="btnRestart">เล่นช่องแรก</button>
-        <button class="btn" id="btnExternalNow">เปิดภายนอก</button>
+        <p id="status">กำลังเตรียมสัญญาณ...</p>
       </div>
     </aside>
   </section>
 
-  <section class="toolbar">
-    <div class="search-wrap">
-      <input id="searchInput" type="search" autocomplete="off" placeholder="ค้นหาช่อง เช่น beIN, True Sport, FIFA, Monomax">
-    </div>
-    <div class="count" id="countText">กำลังเตรียมรายการช่อง...</div>
+  <section
+    id="channelsPanel"
+    class="tab-panel active"
+    role="tabpanel"
+    aria-labelledby="tabChannels"
+  >
+    <section id="grid-sports" class="channel-grid"></section>
+
+    <p class="hint">
+      * คลิกโลโก้ช่องเพื่อรับชมทันที | อัพเดตล่าสุด by BK-16
+    </p>
   </section>
 
-  <section id="grid-sports" class="channel-grid"></section>
+  <section
+    id="schedulePanel"
+    class="tab-panel"
+    role="tabpanel"
+    aria-labelledby="tabSchedule"
+    hidden
+  >
+    <div class="schedule-card">
+      <div class="schedule-head">
+        <div>
+          <p class="schedule-kicker">Broadcast Schedule</p>
+          <h2>ตารางการถ่ายทอด</h2>
+        </div>
+        <span class="schedule-live-pill">LIVE UPDATE</span>
+      </div>
 
-  <p class="hint">
-    * คลิกโลโก้ช่องเพื่อเล่นทันที | ระบบจะช่วยเปิดผ่าน player ภายนอกตามอุปกรณ์
-  </p>
+      <div id="scheduleList" class="schedule-list"></div>
+    </div>
+  </section>
 
   <div class="footer">
-    ใช้กับลิงก์สตรีมหรือรับชมเท่านั้น ห้ามเผยแพร่เชิงพานิชย์ • Design by BK-16
+    ใช้กับลิงก์สตรีมหรือรับชมเท่านั้น ห้ามเผยแพร่เชิงพาณิชย์ • Design by BK-16
   </div>
 </main>
 
@@ -1006,8 +1619,12 @@ const sports = [
 const v = document.getElementById('v');
 const gridSports = document.getElementById('grid-sports');
 const statusBox = document.getElementById('status');
-const searchInput = document.getElementById('searchInput');
-const countText = document.getElementById('countText');
+
+const tabChannels = document.getElementById('tabChannels');
+const tabSchedule = document.getElementById('tabSchedule');
+const channelsPanel = document.getElementById('channelsPanel');
+const schedulePanel = document.getElementById('schedulePanel');
+const scheduleList = document.getElementById('scheduleList');
 
 const featuredLogo = document.getElementById('featuredLogo');
 const featuredName = document.getElementById('featuredName');
@@ -1015,8 +1632,6 @@ const nowLogoMini = document.getElementById('nowLogoMini');
 const nowNameMini = document.getElementById('nowNameMini');
 const nowGroupMini = document.getElementById('nowGroupMini');
 
-const btnRestart = document.getElementById('btnRestart');
-const btnExternalNow = document.getElementById('btnExternalNow');
 
 const playerModal = document.getElementById('playerModal');
 const modalLogo = document.getElementById('modalLogo');
@@ -1156,7 +1771,7 @@ function openExternalTab(channel){
   if (win) {
     setStatus(`เปิด ${channel.name} ในแท็บใหม่แล้ว`, 'ok');
   } else {
-    setStatus('เบราว์เซอร์บล็อก popup กรุณาอนุญาต popup แล้วลองอีกครั้ง', 'bad');
+    setStatus('ไม่สามารถเปิดช่องนี้ได้ กรุณาลองอีกครั้ง', 'bad');
   }
 }
 
@@ -1326,17 +1941,6 @@ btnIOSTab.onclick = () => {
   openExternalTab(selectedChannel);
 };
 
-btnRestart.onclick = () => {
-  const first = normalizeChannels()[0];
-  if (first) playChannel(first);
-};
-
-btnExternalNow.onclick = () => {
-  if (!selectedChannel) return;
-  openExternalTab(selectedChannel);
-};
-
-
 /* ==============================
    Fallback behavior
 ================================= */
@@ -1383,7 +1987,7 @@ function playChannel(channel){
   updateNowPlaying(channel);
   stopCurrentStream();
 
-  setStatus(`กำลังลองเล่น ${channel.name} บนหน้าเว็บไซต์...`, 'normal');
+  setStatus(`กำลังเตรียมสัญญาณ ${channel.name}...`, 'normal');
 
   const url = channel.url;
 
@@ -1438,7 +2042,7 @@ function playChannel(channel){
     _hls.on(Hls.Events.MANIFEST_PARSED, () => {
       if (token !== playToken) return;
 
-      setStatus('โหลด playlist สำเร็จ กำลังเล่น...', 'normal');
+      setStatus('กำลังเชื่อมต่อสัญญาณ...', 'normal');
 
       v.play()
         .then(() => {
@@ -1487,30 +2091,32 @@ function playChannel(channel){
 
 
 /* ==============================
-   Render channels
+   Scroll to video player
 ================================= */
-function getFilteredChannels(){
-  const q = searchInput.value.trim().toLowerCase();
-  const channels = normalizeChannels();
+function scrollToPlayer(){
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
 
-  if (!q) return channels;
-
-  return channels.filter(channel => {
-    const text = `${channel.name} ${channel.id} ${channel._group}`.toLowerCase();
-    return text.includes(q);
+  requestAnimationFrame(() => {
+    hero.scrollIntoView({
+      behavior:'smooth',
+      block:'start'
+    });
   });
 }
 
-function renderGrid(){
-  const channels = getFilteredChannels();
-  gridSports.innerHTML = '';
 
-  countText.textContent = `ทั้งหมด ${channels.length} ช่อง จาก ${sports.length} ช่อง`;
+/* ==============================
+   Render channels
+================================= */
+function renderGrid(){
+  const channels = normalizeChannels();
+  gridSports.innerHTML = '';
 
   if (channels.length === 0) {
     gridSports.innerHTML = `
       <div class="empty">
-        ไม่พบช่องที่ค้นหา ลองพิมพ์ชื่ออื่น เช่น FIFA, beIN, True Sport หรือ Monomax
+        ยังไม่มีรายการช่องในระบบ
       </div>
     `;
     return;
@@ -1529,27 +2135,79 @@ function renderGrid(){
       <div class="channel-meta">
         <div>
           <div class="channel-name">${escapeHtml(channel.name)}</div>
-          <span class="channel-tag">${escapeHtml(channel._group)}</span>
         </div>
-        <div class="play-dot">▶</div>
       </div>
     `;
 
-    d.onclick = () => playChannel(channel);
+    d.onclick = () => {
+      playChannel(channel);
+      scrollToPlayer();
+    };
     gridSports.appendChild(d);
   });
 
   if (activeKey) setActive(activeKey);
 }
 
-searchInput.addEventListener('input', renderGrid);
 
+
+
+/* ==============================
+   Header tabs + broadcast schedule
+================================= */
+const broadcastSchedule = [
+  // เพิ่มรายการได้ในรูปแบบนี้:
+  // { time:"19:00", event:"Team A vs Team B", channel:"beIN SPORT TH 1" }
+];
+
+function renderSchedule(){
+  if (!scheduleList) return;
+
+  if (broadcastSchedule.length === 0) {
+    scheduleList.innerHTML = `
+      <div class="schedule-empty">
+        <div class="schedule-empty-icon" aria-hidden="true">📡</div>
+        <strong>ยังไม่มีรายการถ่ายทอดในขณะนี้</strong>
+        <span>เมื่อเพิ่มรายการลงใน <code>broadcastSchedule</code> ระบบจะแสดงผลที่หน้านี้อัตโนมัติ</span>
+      </div>
+    `;
+    return;
+  }
+
+  scheduleList.innerHTML = broadcastSchedule.map(item => `
+    <article class="schedule-row">
+      <time>${escapeHtml(item.time || '--:--')}</time>
+      <div class="schedule-event">
+        <strong>${escapeHtml(item.event || 'รายการถ่ายทอด')}</strong>
+        <span>${escapeHtml(item.channel || 'BK-16')}</span>
+      </div>
+    </article>
+  `).join('');
+}
+
+function activateTab(tabName){
+  const showChannels = tabName === 'channels';
+
+  tabChannels.classList.toggle('active', showChannels);
+  tabSchedule.classList.toggle('active', !showChannels);
+  tabChannels.setAttribute('aria-selected', String(showChannels));
+  tabSchedule.setAttribute('aria-selected', String(!showChannels));
+
+  channelsPanel.classList.toggle('active', showChannels);
+  schedulePanel.classList.toggle('active', !showChannels);
+  channelsPanel.hidden = !showChannels;
+  schedulePanel.hidden = showChannels;
+}
+
+tabChannels.addEventListener('click', () => activateTab('channels'));
+tabSchedule.addEventListener('click', () => activateTab('schedule'));
 
 /* ==============================
    Init
 ================================= */
 function init(){
   renderGrid();
+  renderSchedule();
 
   const first = normalizeChannels()[0];
 
