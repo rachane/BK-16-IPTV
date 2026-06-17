@@ -1311,6 +1311,60 @@
     }
   }
 
+
+  /* ===== BK-16 UI polish v8 =====
+     "ON AIR" badge on the channel currently playing.
+  */
+  .on-air-badge{
+    position:absolute;
+    top:10px;
+    left:10px;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:4px 9px;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--brand-2),#22c55e);
+    color:#04130b;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.04em;
+    box-shadow:0 8px 18px rgba(52,211,153,.35);
+    opacity:0;
+    transform:translateY(-3px);
+    pointer-events:none;
+    transition:opacity .15s ease, transform .15s ease;
+  }
+
+  .on-air-badge::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#04130b;
+    animation:blink 1.1s infinite;
+  }
+
+  @keyframes blink{
+    0%,100%{opacity:1}
+    50%{opacity:.3}
+  }
+
+  .channel-card.active .on-air-badge{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  @media (max-width:680px){
+    .on-air-badge{
+      top:8px;
+      left:8px;
+      padding:3px 7px;
+      font-size:9px;
+    }
+  }
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -1394,8 +1448,8 @@
   >
     <section id="grid-sports" class="channel-grid"></section>
 
-    <p class="hint">
-      * คลิกโลโก้ช่องเพื่อรับชมทันที | อัพเดตล่าสุด by BK-16
+    <p class="hint" id="updateHint">
+      * คลิกโลโก้ช่องเพื่อรับชมทันที | อัพเดตล่าสุด: <span id="lastUpdated"></span>
     </p>
   </section>
 
@@ -1632,6 +1686,7 @@ const nowLogoMini = document.getElementById('nowLogoMini');
 const nowNameMini = document.getElementById('nowNameMini');
 const nowGroupMini = document.getElementById('nowGroupMini');
 
+const lastUpdatedEl = document.getElementById('lastUpdated');
 
 const playerModal = document.getElementById('playerModal');
 const modalLogo = document.getElementById('modalLogo');
@@ -2128,6 +2183,7 @@ function renderGrid(){
     d.dataset.key = channel._key;
 
     d.innerHTML = `
+      <span class="on-air-badge">ON AIR</span>
       <div class="logo-box">
         <img loading="lazy" src="${escapeHtml(channel.logo)}" alt="${escapeHtml(channel.name)}">
       </div>
@@ -2202,12 +2258,29 @@ function activateTab(tabName){
 tabChannels.addEventListener('click', () => activateTab('channels'));
 tabSchedule.addEventListener('click', () => activateTab('schedule'));
 
+
+/* ==============================
+   Last updated date (auto, YYYY:MM:DD)
+================================= */
+function renderLastUpdated(){
+  if (!lastUpdatedEl) return;
+
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+
+  lastUpdatedEl.textContent = `${yyyy}:${mm}:${dd}`;
+}
+
+
 /* ==============================
    Init
 ================================= */
 function init(){
   renderGrid();
   renderSchedule();
+  renderLastUpdated();
 
   const first = normalizeChannels()[0];
 
